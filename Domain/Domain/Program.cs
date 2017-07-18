@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
+    //first class vlad
     class Program
     {
         static void Main(string[] args)
