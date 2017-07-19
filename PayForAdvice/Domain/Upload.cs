@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    public class Upload
+    public class Upload : Idable
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string UploadURL { get; set; }
 
