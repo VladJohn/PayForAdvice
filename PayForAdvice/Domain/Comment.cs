@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    public class Comment
+    public class Comment : Idable
     {
-        public int Id { get; set; }
         public string CommentText { get; set; }
         public int SenderId { get; set; }
         public DateTime Date { get; set; }
