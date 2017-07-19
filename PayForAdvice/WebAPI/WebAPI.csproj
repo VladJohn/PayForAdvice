@@ -181,6 +181,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Mappings\AnswerMapper.cs" />
+    <Compile Include="Mappings\CategoryMapper.cs" />
+    <Compile Include="Mappings\CommentMapper.cs" />
+    <Compile Include="Mappings\PriceMapper.cs" />
+    <Compile Include="Mappings\QuestionMapper.cs" />
+    <Compile Include="Mappings\RoleMapper.cs" />
+    <Compile Include="Mappings\UploadMapper.cs" />
+    <Compile Include="Mappings\UserMapper.cs" />
     <Compile Include="Models\AnswerModel.cs" />
     <Compile Include="Models\CategoryModel.cs" />
     <Compile Include="Models\CommentModel.cs" />
@@ -260,6 +268,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj">
+      <Project>{BB5B0A3E-7287-4F18-824E-592FDE842889}</Project>
+      <Name>Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
