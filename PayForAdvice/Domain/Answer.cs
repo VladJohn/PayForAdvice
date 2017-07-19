@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace Domain
 {
-    public class Answer
+    public class Answer : Idable
     {
-        public int Id { get; set; }
         public string AnswerText { get; set; }
         public int Rating { get; set; }
         public DateTime Date { get; set; }

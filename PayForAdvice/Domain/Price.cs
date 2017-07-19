@@ -1,8 +1,7 @@
 ﻿namespace Domain
 {
-    public class Price
+    public class Price : Idable
     {
-        public int Id { get; set; }
         public double Amount { get; set; }
         public string Details { get; set; }
         public string Order { get; set; }

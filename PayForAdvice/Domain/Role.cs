@@ -2,9 +2,8 @@
 
 namespace Domain
 {
-    public class Role
+    public class Role : Idable
     {
-        public int Id { get; set; }
         public string Name { get; set; }
 
         //foreign key

@@ -52,6 +52,7 @@
     <Compile Include="Answer.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="Comment.cs" />
+    <Compile Include="Idable.cs" />
     <Compile Include="Price.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
