@@ -13,7 +13,7 @@ namespace Domain
 
         public int QuestionId { get; set; }
         public Question Question { get; set; }
-        public int UserIdResponder { get; set; }
+        public int UserId { get; set; }
         public User UserResponder { get; set; }
 
         public ICollection<Upload> Uploads { get; set; }
