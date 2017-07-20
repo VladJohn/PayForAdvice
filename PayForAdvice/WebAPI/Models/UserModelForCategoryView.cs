@@ -13,5 +13,6 @@ namespace WebAPI.Models
         public string Bio { get; set; }
         public string Name { get; set; }
         public string AvatarUrl { get; set; }
+        public double Rating { get; set; }
     }
 }

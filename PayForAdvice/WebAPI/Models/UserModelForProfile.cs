@@ -15,5 +15,6 @@ namespace WebAPI.Models
         public string Name { get; set; }
         public string Email { get; set; }
         public string AvatarUrl { get; set; }
+        public double Rating { get; set; }
     }
 }
