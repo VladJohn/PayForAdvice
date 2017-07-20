@@ -15,19 +15,19 @@ namespace WebAPI.Services
 {
     public class UserService
     {
-        public UserModel AddUser(UserModel user)
+        public UserModelForSignUp AddUser(UserModelForSignUp user)
         {
             using (var uw = new UnitOfWork())
             {
                 var repo = uw.GetRepository<User>();
-                repo.Add(UserMapper.MapUserDataModel(user));
+                repo.Add(UserMapper.MapUserFromSignUp(user));
                 uw.Save();
                 return user;
             }
         }
 
 
-        public User LogIn(string username, string password)
+        public UserModel LogIn(string username, string password)
         {
             using (var uw = new UnitOfWork())
             {
@@ -36,20 +36,55 @@ namespace WebAPI.Services
                 User found = users.ToList().Where(x => x.Username.Equals(username) && x.Password.Equals(password)).FirstOrDefault();
                 if (found != null)
                 {
-                    return found;
+                    return UserMapper.MapUser(found);
                 }
                 return null;
             }
         }
 
-        public List<UserModel> GetAdvicersByCategory(int idCategory)
+        public UserModelForProfile GetUser(int idUser)
         {
-            var foundUsers = new List<UserModel>();
             using (var uw = new UnitOfWork())
             {
                 var repo = uw.GetRepository<User>();
-                var users = repo.GetAll().Where(x => x.Role.Name == "advicer" && x.Status == "active" && x.Categories.Any(c => c.Id == idCategory)).ToList();
-                return UserMapper.MapUserList(users);
+                var user = UserMapper.MapUserForProfile(repo.Find(idUser));
+                user.Rating = GetRatingForUser(idUser);
+                return user;
+            }
+        }
+
+        public List<UserModelForCategoryView> GetAdvicersByCategory(int idCategory)
+        {
+            var advicers = new List<UserModelForCategoryView>();
+            using (var uw = new UnitOfWork())
+            {
+                var repo = uw.GetRepository<User>();
+                var users = repo.GetAll().Where(x => x.Role.Name == "adviser" && x.Status == "active" && x.Categories.Any(c => c.Id == idCategory)).ToList();
+                
+                foreach ( var user in users)
+                {
+                    var advicer = UserMapper.MapUserForCategoryView(user);
+                    advicer.Rating = GetRatingForUser(advicer.Id);
+                    advicers.Add(advicer); ;
+                }
+                return advicers;
+                
+            }
+        }
+
+        public UserModelForProfile UpdateUserProfile(UserModelForProfile user)
+        {
+            using (var uw = new UnitOfWork())
+            {
+                var repo = uw.GetRepository<User>();
+                var userToUpdate = repo.Find(user.Id);
+                userToUpdate.Password = user.Password;
+                userToUpdate.Website = user.Website;
+                userToUpdate.Bio = user.Bio;
+                userToUpdate.AvatarUrl = user.AvatarUrl;
+                repo.Update(userToUpdate);
+                uw.Save();
+                return user;
             }
         }
 
@@ -60,7 +95,7 @@ namespace WebAPI.Services
             {
                 var repo = uw.GetRepository<User>();
                 var user = repo.Find(idUser);
-                if (user.Role.Name == "advicer")
+                if (user.RoleId == 2)
                 {
                     foreach (var a in user.Answers)
                     {
@@ -71,6 +106,7 @@ namespace WebAPI.Services
             }
             return rating;
         }
+
 
 
         public UserModel DeleteUser(int idUser)
