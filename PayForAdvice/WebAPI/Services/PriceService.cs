@@ -29,7 +29,7 @@ public class PriceService
         using (var uw = new UnitOfWork())
         {
             var repo = uw.GetRepository<Price>();
-            var listUser = repo.GetAll().ToList().Where(x => x.Id == idUser).ToList();
+            var listUser = repo.GetAll().ToList().Where(x => x.UserId == idUser).ToList();
             var listPrice = new List<PriceModel>();
             foreach (var user in listUser)
             {
