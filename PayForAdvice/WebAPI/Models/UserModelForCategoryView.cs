@@ -6,14 +6,13 @@ using System.Web;
 
 namespace WebAPI.Models
 {
-    public class UploadModel
+    public class UserModelForCategoryView
     {
         public int Id { get; set; }
-        [Required]
+        public string Username { get; set; }
+        public string Bio { get; set; }
         public string Name { get; set; }
-        [Required]
-        public string UploadURL { get; set; }
-
-        public int AnswerId { get; set; }
+        public string AvatarUrl { get; set; }
+        public double Rating { get; set; }
     }
 }
