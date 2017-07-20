@@ -19,7 +19,6 @@ namespace WebAPI.Models
         public string ReportText { get; set; }
 
         public int QuestionId { get; set; }
-        public Question Question { get; set; }
         public int UserId { get; set; }
     }
 }
