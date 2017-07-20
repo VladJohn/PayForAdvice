@@ -15,13 +15,10 @@ namespace Repository
                 {
                     var repo = uw.GetRepository<Role>();
                     var repoU = uw.GetRepository<User>();
-
-
-                    var role = repo.Find(1);
-                    role.Name = "administrator";
-                    repo.Update(role);
-                    uw.Save();
-                    Console.Write(repo.Find(1).Name);
+                    foreach (var x in repoU.GetAll().ToList())
+                    {
+                        Console.Write(x.Name);
+                    }
                 }
             }
         

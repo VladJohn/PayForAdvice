@@ -19,6 +19,11 @@ namespace Repository
             this.dbc = dbc;
         }
 
+        public void Add(object p)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Add(E entity)
         {
             objs.Add(entity);
