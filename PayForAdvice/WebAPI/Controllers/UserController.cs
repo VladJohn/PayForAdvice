@@ -8,6 +8,7 @@ using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
+    //test comment
     public class UserController : ApiController
     {
         public IHttpActionResult GetUsersByCategory(int idCategory)
