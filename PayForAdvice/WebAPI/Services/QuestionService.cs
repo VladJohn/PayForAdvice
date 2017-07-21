@@ -17,6 +17,8 @@ namespace WebAPI.Services
             {
                 var questionRepo = uw.GetRepository<Question>();
                 var questionToAdd = QuestionMapper.MapQuestionDataModel(question);
+                questionToAdd.Date = DateTime.Now;
+                questionToAdd.Status = "pending";
                 questionRepo.Add(questionToAdd);
                 uw.Save();
                 return QuestionMapper.MapQuestion(questionToAdd);
