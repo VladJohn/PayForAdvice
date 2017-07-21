@@ -17,6 +17,7 @@ namespace WebAPI.Services
             {
                 var commentRepo = uw.GetRepository<Comment>();
                 var commentToAdd = CommentMapper.MapCommentDataModel(comment);
+                commentToAdd.Date = DateTime.Now;
                 commentRepo.Add(commentToAdd);
                 uw.Save();
                 return CommentMapper.MapComment(commentToAdd);

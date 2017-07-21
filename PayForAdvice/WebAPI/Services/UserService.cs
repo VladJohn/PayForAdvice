@@ -20,7 +20,10 @@ namespace WebAPI.Services
             using (var uw = new UnitOfWork())
             {
                 var repo = uw.GetRepository<User>();
-                repo.Add(UserMapper.MapUserFromSignUp(user));
+                var userToAdd = UserMapper.MapUserFromSignUp(user);
+                userToAdd.Status = "active";
+                userToAdd.RoleId = 3;
+                repo.Add(userToAdd);
                 uw.Save();
                 return user;
             }
