@@ -23,17 +23,17 @@ namespace WebAPI.Controllers
         }
 
         //POST
-        public IHttpActionResult Add([FromBody]CommentModel com)
+        public IHttpActionResult Add([FromBody]CommentModel comment)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new CommentService();
-            var ac = service.Add(com);
-            if (ac == null)
+            var addComent = service.Add(comment);
+            if (addComent == null)
             {
                 return BadRequest();
             }
-            return Ok(ac);
+            return Ok(addComent);
         }
     }
 }

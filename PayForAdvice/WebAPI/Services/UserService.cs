@@ -1,8 +1,4 @@
-﻿
-
-
-
-using Domain;
+﻿using Domain;
 using Repository;
 using System;
 using System.Collections.Generic;
@@ -63,7 +59,6 @@ namespace WebAPI.Services
             {
                 var repo = uw.GetRepository<User>();
                 var users = repo.GetAll().Where(x => x.Role.Name == "adviser" && x.Status == "active" && x.Categories.Any(c => c.Id == idCategory)).ToList();
-                
                 foreach ( var user in users)
                 {
                     var advicer = UserMapper.MapUserForCategoryView(user);
