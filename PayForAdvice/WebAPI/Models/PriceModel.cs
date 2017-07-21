@@ -1,11 +1,14 @@
-﻿using System;
+﻿using FluentValidation.Attributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using WebAPI.Validators;
 
 namespace WebAPI.Models
 {
+    [Validator(typeof(PriceValidator))]
     public class PriceModel
     {
         public int Id { get; set; }

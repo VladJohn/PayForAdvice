@@ -49,27 +49,14 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult UpdateRating([FromBody]AnswerModel ans)
+        public IHttpActionResult PutRating([FromBody]AnswerModel ans)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new AnswerService();
             var ac = service.UpdateRating(ans);
-            if (ac == null)
-            {
-                return BadRequest();
-            }
-            return Ok(ac);
-        }
-
-        //PUT
-        public IHttpActionResult UpdateReport([FromBody]AnswerModel ans)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest();
-            var service = new AnswerService();
-            var ac = service.UpdateReport(ans);
-            if (ac == null)
+            var acc = service.UpdateReport(ans);
+            if (ac == null || acc == null )
             {
                 return BadRequest();
             }
