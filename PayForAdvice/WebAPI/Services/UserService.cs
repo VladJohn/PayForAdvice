@@ -63,7 +63,7 @@ namespace WebAPI.Services
                 {
                     var advicer = UserMapper.MapUserForCategoryView(user);
                     advicer.Rating = GetRatingForUser(advicer.Id);
-                    advicers.Add(advicer); ;
+                    advicers.Add(advicer); 
                 }
                 return advicers;
                 

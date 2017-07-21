@@ -11,18 +11,18 @@ namespace WebAPI.Services
 {
     public class AnswerService
     {
-        public List<AnswerModel> GetAllAnswersByUserId(int id)
+        public List<AnswerModel> GetAllAnswersByUserId(int idUser)
         {
             var result = new List<AnswerModel>();
             using (var uw = new UnitOfWork())
             {
                 var answerRepo = uw.GetRepository<Answer>();
                 var answerList = answerRepo.GetAll();
-                foreach (var ans in answerList)
+                foreach (var answer in answerList)
                 {
-                    if (ans.UserId == id)
+                    if (answer.UserId == idUser)
                     {
-                        var a = AnswerMapper.MapAnswer(ans);
+                        var a = AnswerMapper.MapAnswer(answer);
                         result.Add(a);
                     }
                 }
@@ -37,11 +37,11 @@ namespace WebAPI.Services
             {
                 var answerRepo = uw.GetRepository<Answer>();
                 var answerList = answerRepo.GetAll();
-                foreach (var ans in answerList)
+                foreach (var answer in answerList)
                 {
-                    if (ans.Status == "unsolved")
+                    if (answer.Status == "unsolved")
                     {
-                        var a = AnswerMapper.MapAnswer(ans);
+                        var a = AnswerMapper.MapAnswer(answer);
                         result.Add(a);
                     }
                 }
@@ -61,7 +61,7 @@ namespace WebAPI.Services
             }
         }
 
-        public AnswerModel GetAnAnswerByQuestionId(int id)
+        public AnswerModel GetAnAnswerByQuestionId(int idQuestion)
         {
             using (var uw = new UnitOfWork())
             {
@@ -69,17 +69,17 @@ namespace WebAPI.Services
                 var questionRepo = uw.GetRepository<Question>();
                 var answerList = answerRepo.GetAll();
                 var questionList = questionRepo.GetAll();
-                foreach (var q in questionList)
+                foreach (var question in questionList)
                 {
-                    if (q.Id == id)
+                    if (question.Id == idQuestion)
                     {
-                        if (q.Status.Equals("solved"))
+                        if (question.Status.Equals("solved"))
                         {
-                            foreach (var ans in answerList)
+                            foreach (var answer in answerList)
                             {
-                                if (ans.QuestionId == id)
+                                if (answer.QuestionId == idQuestion)
                                 {
-                                    var a = AnswerMapper.MapAnswer(ans);
+                                    var a = AnswerMapper.MapAnswer(answer);
                                     return a;
                                 }
                             }

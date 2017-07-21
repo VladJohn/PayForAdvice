@@ -23,19 +23,19 @@ namespace WebAPI.Controllers
         }
 
         //POST
-        public IHttpActionResult Add([FromBody]QuestionModel que, int idResponder)
+        public IHttpActionResult Add([FromBody]QuestionModel question, int idResponder)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new QuestionService();
             var serviceAnswers = new AnswerService();
-            var ac = service.Add(que);
-            serviceAnswers.AddEmpty(ac.Id, idResponder);
-            if (ac == null)
+            var addQuestion = service.Add(question);
+            serviceAnswers.AddEmpty(addQuestion.Id, idResponder);
+            if (addQuestion == null)
             {
                 return BadRequest();
             }
-            return Ok(ac);
+            return Ok(addQuestion);
         }
     }
 }
