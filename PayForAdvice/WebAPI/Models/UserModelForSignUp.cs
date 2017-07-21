@@ -1,11 +1,14 @@
-﻿using System;
+﻿using FluentValidation.Attributes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using WebAPI.Validators;
 
 namespace WebAPI.Models
 {
+    [Validator(typeof(UserValidator))]
     public class UserModelForSignUp
     {
         public int Id { get; set; }
@@ -18,6 +21,5 @@ namespace WebAPI.Models
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-        //
     }
 }

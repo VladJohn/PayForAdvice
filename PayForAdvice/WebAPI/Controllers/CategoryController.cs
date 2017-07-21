@@ -12,12 +12,9 @@ namespace WebAPI.Controllers
         public IHttpActionResult Get()
         {
             var service = new CategoryService();
-
             var categories = service.GetAllCategories();
             if (categories.Count == 0)
-            {
                 return NotFound();
-            }
             return Ok(categories);
         }
     }

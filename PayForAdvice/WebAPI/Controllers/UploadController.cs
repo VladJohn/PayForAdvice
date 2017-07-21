@@ -11,17 +11,17 @@ namespace WebAPI.Controllers
     public class UploadController : ApiController
     {
         //POST
-        public IHttpActionResult Add([FromBody]UploadModel upl)
+        public IHttpActionResult Add([FromBody]UploadModel upload)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new UploadService();
-            var ac = service.Register(upl);
-            if (ac == null)
+            var addUpload = service.Register(upload);
+            if (addUpload == null)
             {
                 return BadRequest();
             }
-            return Ok(ac);
+            return Ok(addUpload);
         }
     }
 }

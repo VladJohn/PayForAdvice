@@ -34,13 +34,25 @@ namespace WebAPI.Controllers
             return Ok(answer);
         }
 
-        //POST
-        public IHttpActionResult Add([FromBody]AnswerModel ans)
+        //GET
+        public IHttpActionResult GetAllAnswersByUnsolvedReports()
+        {
+            var service = new AnswerService();
+            var answers = service.GetAllAnswersByUnsolvedReports();
+            if (answers == null)
+            {
+                return NotFound();
+            }
+            return Ok(answers);
+        }
+
+        //PUT
+        public IHttpActionResult PutAnswer([FromBody]AnswerModel ans)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new AnswerService();
-            var ac = service.Add(ans);
+            var ac = service.UpdateAnswer(ans);
             if (ac == null)
             {
                 return BadRequest();
@@ -49,7 +61,7 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult UpdateRating([FromBody]AnswerModel ans)
+        public IHttpActionResult PutRating([FromBody]AnswerModel ans)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -63,7 +75,7 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult UpdateReport([FromBody]AnswerModel ans)
+        public IHttpActionResult PutReport([FromBody]AnswerModel ans)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

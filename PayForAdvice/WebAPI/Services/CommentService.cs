@@ -17,24 +17,25 @@ namespace WebAPI.Services
             {
                 var commentRepo = uw.GetRepository<Comment>();
                 var commentToAdd = CommentMapper.MapCommentDataModel(comment);
+                commentToAdd.Date = DateTime.Now;
                 commentRepo.Add(commentToAdd);
                 uw.Save();
                 return CommentMapper.MapComment(commentToAdd);
             }
         }
 
-        public List<CommentModel> GetAllCommentsForQuestionId (int id)
+        public List<CommentModel> GetAllCommentsForQuestionId (int idQuestion)
         {
             var result = new List<CommentModel>();
             using (var uw = new UnitOfWork())
             {
                 var commentRepo = uw.GetRepository<Comment>();
                 var commentList = commentRepo.GetAll();
-                foreach (var comm in commentList)
+                foreach (var comment in commentList)
                 {
-                    if(comm.Id == id)
+                    if(comment.Id == idQuestion)
                     {
-                        var c = CommentMapper.MapComment(comm);
+                        var c = CommentMapper.MapComment(comment);
                         result.Add(c);
                     }
                 }

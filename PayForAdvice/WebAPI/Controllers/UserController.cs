@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -38,6 +37,8 @@ namespace WebAPI.Controllers
 
         public IHttpActionResult PostUser([FromBody]UserModelForSignUp user)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
             var service = new UserService();
             var userAdded = service.AddUser(user);
             if (userAdded == null)
@@ -49,6 +50,8 @@ namespace WebAPI.Controllers
 
         public IHttpActionResult PutUserDeleteStatus(int idUser)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
             var service = new UserService();
             var user = service.DeleteUser(idUser);
             if (user == null)
@@ -60,6 +63,8 @@ namespace WebAPI.Controllers
 
         public IHttpActionResult PutUserProfile([FromBody] UserModelForProfile user)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
             var service = new UserService();
             var updated = service.UpdateUserProfile(user);
             if (updated == null)
@@ -79,5 +84,7 @@ namespace WebAPI.Controllers
             }
             return Ok(user);
         }
+
+
     }
 }
