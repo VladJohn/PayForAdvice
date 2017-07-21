@@ -24,18 +24,18 @@ namespace WebAPI.Services
             }
         }
 
-        public List<CommentModel> GetAllCommentsForQuestionId (int id)
+        public List<CommentModel> GetAllCommentsForQuestionId (int idQuestion)
         {
             var result = new List<CommentModel>();
             using (var uw = new UnitOfWork())
             {
                 var commentRepo = uw.GetRepository<Comment>();
                 var commentList = commentRepo.GetAll();
-                foreach (var comm in commentList)
+                foreach (var comment in commentList)
                 {
-                    if(comm.Id == id)
+                    if(comment.Id == idQuestion)
                     {
-                        var c = CommentMapper.MapComment(comm);
+                        var c = CommentMapper.MapComment(comment);
                         result.Add(c);
                     }
                 }

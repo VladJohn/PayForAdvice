@@ -25,18 +25,18 @@ namespace WebAPI.Services
             }
         }
 
-        public List<QuestionModel> GetAllQuestionsByUserId (int id)
+        public List<QuestionModel> GetAllQuestionsByUserId (int idUser)
         {
             var result = new List<QuestionModel>();
             using (var uw = new UnitOfWork())
             {
                 var questionRepo = uw.GetRepository<Question>();
                 var questionList = questionRepo.GetAll();
-                foreach (var que in questionList)
+                foreach (var question in questionList)
                 {
-                    if (que.UserId == id)
+                    if (question.UserId == idUser)
                     {
-                        var q = QuestionMapper.MapQuestion(que);
+                        var q = QuestionMapper.MapQuestion(question);
                         result.Add(q);
                     }
                 }
