@@ -3,6 +3,7 @@ using Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using WebAPI.Mappings;
 using WebAPI.Models;
@@ -26,16 +27,21 @@ namespace WebAPI.Services
         }
 
 
-        public UserModel LogIn(string username, string password)
+        public TokenModel LogIn(string username, string password)
         {
             using (var uw = new UnitOfWork())
             {
                 var repo = uw.GetRepository<User>();
                 var users = repo.GetAll();
+                var repol = uw.GetRepository<Token>();
                 User found = users.ToList().Where(x => x.Username.Equals(username) && x.Password.Equals(password)).FirstOrDefault();
                 if (found != null)
                 {
-                    return UserMapper.MapUser(found);
+                    var token = new Token { Ip = GetClientIp(), Expiration = DateTime.Now.AddMinutes(30), UserId = found.Id, TokenText = Guid.NewGuid().ToString()};
+                    repol.Add(token);
+                    var tokenToReturn = new TokenModel { Ip = token.Ip, Expiration = token.Expiration, UserId = token.UserId, TokenText = token.TokenText };
+                    uw.Save();
+                    return tokenToReturn;
                 }
                 return null;
             }
@@ -120,6 +126,14 @@ namespace WebAPI.Services
             }
         }
 
+        private string GetClientIp()
+        {
+            var ip = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : "";
+            var context = new HttpContextWrapper(HttpContext.Current);
+            var request = (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"];
+
+            return ip;
+        }
     }
 }
 

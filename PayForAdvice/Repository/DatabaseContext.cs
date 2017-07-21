@@ -19,6 +19,7 @@ namespace Repository
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Upload> Uploads { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Token> Tokens { get; set; }
 
         public DatabaseContext() : base("name = DatabaseContext")
         {

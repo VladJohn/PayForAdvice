@@ -13,13 +13,22 @@ namespace WebAPI.Controllers
     {
         public IHttpActionResult GetUsersByCategory(int idCategory)
         {
-            var service = new UserService();
-            var users = service.GetAdvicersByCategory(idCategory);
-            if (users == null)
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var service2 = new TokenService();
+            var authorizedToken = service2.Authorize(token);
+            if (authorizedToken != null)
             {
-                return NotFound();
+                var service = new UserService();
+                var users = service.GetAdvicersByCategory(idCategory);
+                if (users == null)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return NotFound();
+                }
+                service2.Update(authorizedToken.Id);
+                return Ok(users);
             }
-            return Ok(users);
+            return BadRequest();
         }
 
         //fix it
@@ -31,60 +40,107 @@ namespace WebAPI.Controllers
             {
                 return NotFound();
             }
-
             return Ok(found);
         }
 
         public IHttpActionResult PostUser([FromBody]UserModelForSignUp user)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-            var service = new UserService();
-            var userAdded = service.AddUser(user);
-            if (userAdded == null)
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var service2 = new TokenService();
+            var authorizedToken = service2.Authorize(token);
+            if (authorizedToken != null)
             {
-                return NotFound();
+                if (!ModelState.IsValid)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return BadRequest();
+                }
+                var service = new UserService();
+                var userAdded = service.AddUser(user);
+                if (userAdded == null)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return NotFound();
+                }
+                service2.Update(authorizedToken.Id);
+                return Ok(userAdded);
             }
-            return Ok(userAdded);
+            return BadRequest();
         }
 
         public IHttpActionResult PutUserDeleteStatus(int idUser)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-            var service = new UserService();
-            var user = service.DeleteUser(idUser);
-            if (user == null)
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var service2 = new TokenService();
+            var authorizedToken = service2.Authorize(token);
+            if (authorizedToken != null)
             {
-                return NotFound();
+                if (!ModelState.IsValid)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return BadRequest();
+                }
+                var service = new UserService();
+                var user = service.DeleteUser(idUser);
+                if (user == null)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return NotFound();
+                }
+                service2.Update(authorizedToken.Id);
+                return Ok(user);
             }
-            return Ok(user);
+            return BadRequest();
         }
 
         public IHttpActionResult PutUserProfile([FromBody] UserModelForProfile user)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-            var service = new UserService();
-            var updated = service.UpdateUserProfile(user);
-            if (updated == null)
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var service2 = new TokenService();
+            var authorizedToken = service2.Authorize(token);
+            if (authorizedToken != null)
             {
-                return NotFound();
+                if (!ModelState.IsValid)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return BadRequest();
+                }
+                var service = new UserService();
+                var updated = service.UpdateUserProfile(user);
+                if (updated == null)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return NotFound();
+                }
+                service2.Update(authorizedToken.Id);
+                return Ok(updated);
             }
-            return Ok(updated);
+            return BadRequest();
         }
 
         public IHttpActionResult GetUser(int id)
         {
-            var service = new UserService();
-            var user = service.GetUser(id);
-            if (user == null)
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var service2 = new TokenService();
+            var authorizedToken = service2.Authorize(token);
+            if (authorizedToken != null)
             {
-                return NotFound();
+                if (!ModelState.IsValid)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return BadRequest();
+                }
+                var service = new UserService();
+                var user = service.GetUser(id);
+                if (user == null)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return NotFound();
+                }
+                service2.Update(authorizedToken.Id);
+                return Ok(user);
             }
-            return Ok(user);
+            return BadRequest();
         }
-
-
     }
 }
