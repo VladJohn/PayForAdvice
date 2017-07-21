@@ -12,8 +12,8 @@ namespace WebAPI.Validators
         public AnswerValidator()
         {
             RuleFor(x => x.AnswerText).NotEmpty().WithMessage("Cannot submit an empty answer.");
-            RuleFor(x => x.Rating).GreaterThan(5).WithMessage("The maximum rating is 5.")
-                                  .LessThan(1).WithMessage("The minimum rating is 1.");
+            RuleFor(x => x.Rating).LessThan(5).WithMessage("The maximum rating is 5.")
+                                  .GreaterThan(1).WithMessage("The minimum rating is 1.");
         }
     }
 }
