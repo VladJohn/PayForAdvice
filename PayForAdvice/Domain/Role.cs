@@ -7,7 +7,7 @@ namespace Domain
         public string Name { get; set; }
 
         //foreign key
-        public ICollection<User> Users { get; set; }
+        public virtual ICollection<User> Users { get; set; }
         public Role()
         {
             Users = new HashSet<User>();
