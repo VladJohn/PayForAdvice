@@ -12,11 +12,11 @@ namespace Domain
         public string ReportText { get; set; }
 
         public int QuestionId { get; set; }
-        public Question Question { get; set; }
+        public virtual Question Question { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
-        public ICollection<Upload> Uploads { get; set; }
+        public virtual ICollection<Upload> Uploads { get; set; }
 
         public Answer()
         {
