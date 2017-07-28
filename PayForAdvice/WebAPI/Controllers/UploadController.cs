@@ -11,7 +11,7 @@ namespace WebAPI.Controllers
     public class UploadController : ApiController
     {
         //POST
-        public IHttpActionResult Add([FromBody]UploadModel upload)
+        public IHttpActionResult Add(UploadModel upload)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

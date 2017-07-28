@@ -47,7 +47,7 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult PutAnswer([FromBody]AnswerModel answer)
+        public IHttpActionResult PutAnswer(AnswerModel answer)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -61,7 +61,7 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult PutRating([FromBody]AnswerModel answer)
+        public IHttpActionResult PutRating(AnswerModel answer)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -75,7 +75,7 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult PutReport([FromBody]AnswerModel answer)
+        public IHttpActionResult PutReport(AnswerModel answer)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

@@ -37,12 +37,12 @@ namespace WebAPI.Controllers
             var found = service.LogIn(username, password);
             if (found == null)
             {
-                return NotFound();
+                return BadRequest();
             }
             return Ok(found);
         }
 
-        public IHttpActionResult PostUser([FromBody]UserModelForSignUp user)
+        public IHttpActionResult PostUser(UserModelForSignUp user)
         {
             if (!ModelState.IsValid)
             {
