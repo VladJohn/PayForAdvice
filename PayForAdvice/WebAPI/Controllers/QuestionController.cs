@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
         }
 
         //POST
-        public IHttpActionResult Add([FromBody]QuestionModel question, int idResponder)
+        public IHttpActionResult Add(QuestionModel question, int idResponder)
         {
             if (!ModelState.IsValid)
                 return BadRequest();

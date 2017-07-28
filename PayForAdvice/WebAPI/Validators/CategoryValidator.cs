@@ -11,7 +11,7 @@ namespace WebAPI.Validators
     {
         public CategoryValidator()
         {
-            RuleFor(x => x.Name).Length(2, 100).WithMessage("Name of category is too long. Must be between 2 and 100 characters.");
+            //RuleFor(x => x.Name).Length(2, 100).WithMessage("Name of category is too long. Must be between 2 and 100 characters.");
         }
     }
 }

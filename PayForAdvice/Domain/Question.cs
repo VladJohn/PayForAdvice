@@ -10,7 +10,7 @@ namespace Domain
         public string Status { get; set; }
 
         public int UserId { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Answer> Answers { get; set; }

@@ -18,7 +18,7 @@ namespace Domain
         public string Status { get; set; }
 
         public int RoleId { get; set; }
-        public Role Role { get; set; }
+        public virtual Role Role { get; set; }
 
         public virtual ICollection<Price> Prices { get; set; }
         public virtual ICollection<Category> Categories { get; set; }
