@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
             return Ok(found);
         }
 
-        public IHttpActionResult PostUser([FromBody]dynamic user)
+        public IHttpActionResult PostUser(UserModelForSignUp user)
         {
             if (!ModelState.IsValid)
             {

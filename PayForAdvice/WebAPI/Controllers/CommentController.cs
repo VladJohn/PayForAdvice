@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
         }
 
         //POST
-        public IHttpActionResult Add([FromBody]CommentModel comment)
+        public IHttpActionResult Add(CommentModel comment)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
