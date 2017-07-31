@@ -86,6 +86,8 @@ namespace WebAPI.Services
                 userToUpdate.Website = user.Website;
                 userToUpdate.Bio = user.Bio;
                 userToUpdate.AvatarUrl = user.AvatarUrl;
+                userToUpdate.Email = user.Email;
+                userToUpdate.Name = user.Name;
                 repo.Update(userToUpdate);
                 uw.Save();
                 return user;
