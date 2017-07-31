@@ -21,7 +21,28 @@ namespace WebAPI.Controllers
             }
             return Ok(questions);
         }
-
+        //sort the questions by the status
+        public IHttpActionResult GetQuestionsByStatus(int IdUser)
+        {
+            var service = new QuestionService();
+            var questions = service.GetQuestionsByStatus(IdUser);
+            if (questions == null)
+            {
+                return NotFound();
+            }
+            return Ok(questions);
+        }
+        //sort the questions by date
+        public IHttpActionResult GetQuestionsByDate(int IdUsers)
+        {
+            var service = new QuestionService();
+            var questions = service.GetQuestionsByDate(IdUsers);
+            if (questions == null)
+            {
+                return NotFound();
+            }
+            return Ok(questions);
+        }
         //POST
         public IHttpActionResult Add([FromBody]QuestionModel question, int idResponder)
         {

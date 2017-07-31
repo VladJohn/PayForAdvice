@@ -11,7 +11,7 @@ namespace WebAPI.Mappings
     {
         public static QuestionModel MapQuestion (Question question)
         {
-            return new QuestionModel { Id = question.Id, Date = question.Date, QuestionText = question.QuestionText, Status = question.Status, UserId = question.UserId };
+            return new QuestionModel { Id = question.Id, Date = Convert.ToDateTime(question.Date), QuestionText = question.QuestionText, Status = question.Status, UserId = question.UserId };
         }
 
         public static Question MapQuestionDataModel(QuestionModel question)
