@@ -19,9 +19,9 @@ namespace WebAPI.Validators
                 var users = userRepo.GetAll();
                 foreach(var user in users)
                 {
-                    RuleFor(x => x.Username).Equal(user.Username).WithMessage("Username already in use.");
-                    RuleFor(x => x.Password).Length(6, 40).WithMessage("Password too short.");
-                    RuleFor(x => x.Email).Equal(user.Email).WithMessage("Email already in use.");
+                    //RuleFor(x => x.Username).Equal(user.Username).WithMessage("Username already in use.");
+                    //RuleFor(x => x.Password).Length(6, 40).WithMessage("Password too short.");
+                    //RuleFor(x => x.Email).Equal(user.Email).WithMessage("Email already in use.");
                 }
             }
         }
