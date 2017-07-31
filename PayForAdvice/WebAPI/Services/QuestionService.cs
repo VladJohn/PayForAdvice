@@ -25,6 +25,46 @@ namespace WebAPI.Services
             }
         }
 
+        public List<QuestionModel> GetQuestionsByStatus(int idStatus)
+        {
+            var result = new List<QuestionModel>();
+            using (var uw = new UnitOfWork())
+            {
+                var questionRepo = uw.GetRepository<Question>();
+                var questionList = questionRepo.GetAll();
+                foreach (var question in questionList)
+                {
+                    if (question.UserId == idStatus)
+                    {
+                        var q = QuestionMapper.MapQuestion(question);
+                        result.Add(q);
+                    }
+                }
+                result = result.OrderBy(x => x.Status).ToList();
+            }
+            return result;
+        }
+
+        public List<QuestionModel> GetQuestionsByDate(int idDate)
+        {
+            var result = new List<QuestionModel>();
+            using (var uw = new UnitOfWork())
+            {
+                var questionRepo = uw.GetRepository<Question>();
+                var questionList = questionRepo.GetAll();
+                foreach (var question in questionList)
+                {
+                    if (question.UserId == idDate)
+                    {
+                        var q = QuestionMapper.MapQuestion(question);
+                        result.Add(q);
+                    }
+                }
+                result = result.OrderByDescending(x => x.Date).ToList();
+            }
+            return result;
+        }
+
         public List<QuestionModel> GetAllQuestionsByUserId (int idUser)
         {
             var result = new List<QuestionModel>();
