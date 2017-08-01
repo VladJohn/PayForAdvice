@@ -31,7 +31,7 @@ namespace WebAPI.FacebookIntegration.Service
 
 
         private const string AccessToken =
-                "EAACEdEose0cBAPJwZBy9loWEYzUVhIAZBakpPCgBZCkTVslPoKxG9LFGLs5qBqFevkOFzI2Q8TIfwLTTjYGqZCEreZBGUfKIxHmeWUIlKIpx8LKUkRRTVfC4YczvuGR6wlZAAtqj45ELy3lzepuEz93WIyUZBZCIlLPRnDgvaWvtITdtM0ermkh7E8msBEPmZAgsZD"
+                "EAACEdEose0cBAANOWLjZCIz9kk0XOTyz5CwbLc4bAYMdZA3oNZB2MmLAXSsVkO13NsTsYDwCP7q22HsZBMSiupZAqXyZCQ7NFLvOC1UVgDhd4ZAa0i17ZB3h2U3MqZBxFlr9mkONpIdnj7ZALhGzaouXIcyCtsChYaRogNP4IbGLrmG3zLK8hdEsThYJT7JB3G4SUZD"
             ;
 
         private static readonly HttpClient HttpClient = new HttpClient();
@@ -56,6 +56,16 @@ namespace WebAPI.FacebookIntegration.Service
             return await ExecutePostRequest<UserId>(requestUri, content);
         }
 
+        public async Task<UserId> ShareRatingGiven(int rating)
+        {
+            var msg = "I've been rated " + rating.ToString() + " stars on Advicy!";
+            var queryParams = new NameValueCollection { { "message", msg }, { "link", "www.google.com" } };
+
+            var requestUri = BuildRequestUri("me/feed", queryParams);
+            var queryParamsJson = JsonConvert.SerializeObject(queryParams);
+            var content = new StringContent(queryParamsJson);
+            return await ExecutePostRequest<UserId>(requestUri, content);
+        }
 
         private Uri BuildRequestUri(string method, NameValueCollection queryStringParameters)
         {
