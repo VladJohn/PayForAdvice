@@ -138,5 +138,28 @@ namespace WebAPI.Services
                 return AnswerMapper.MapAnswer(answerToUpdate);
             }
         }
+
+        public string getCategoryByAnswerId(int id)
+        {
+            using (var uw = new UnitOfWork())
+            {
+                var answerRepo = uw.GetRepository<Answer>();
+                var userRepo = uw.GetRepository<User>();
+                foreach (var a in answerRepo.GetAll())
+                {
+                    if (a.Id == id)
+                    {
+                        foreach(var u in userRepo.GetAll())
+                        {
+                            if(a.UserId == u.Id)
+                            {
+                                return u.Categories.FirstOrDefault().Name;
+                            }
+                        }
+                    }
+                }
+            }
+            return "";
+        }
     }
 }
