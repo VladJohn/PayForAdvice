@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using WebAPI.FacebookIntegration.Models;
+using WebAPI.FacebookIntegration.Service;
 using WebAPI.Models;
 using WebAPI.Services;
 
@@ -87,5 +90,13 @@ namespace WebAPI.Controllers
             }
             return Ok(updateReport);
         }
+
+        [HttpPost]
+        public async Task<UserId> post(string category)
+        {
+            FacebookService fs = new FacebookService();
+            return await fs.ShareAdviceGiven(category);
+        }
+
     }
 }
