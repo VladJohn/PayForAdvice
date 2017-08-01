@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using WebAPI.FacebookIntegration.Models;
+using WebAPI.FacebookIntegration.Service;
 using WebAPI.Models;
 using WebAPI.Services;
 
@@ -13,22 +16,22 @@ namespace WebAPI.Controllers
     {
         public IHttpActionResult GetUsersByCategory(int idCategory)
         {
-            var token = HttpContext.Current.Request.Headers["TokenText"];
-            var service2 = new TokenService();
-            var authorizedToken = service2.IsAuthorized(token);
-            if (authorizedToken != null)
+          //  var token = HttpContext.Current.Request.Headers["TokenText"];
+           // var service2 = new TokenService();
+          //  var authorizedToken = service2.IsAuthorized(token);
+         //   if (authorizedToken != null)
             {
                 var service = new UserService();
                 var users = service.GetAdvicersByCategory(idCategory);
                 if (users == null)
                 {
-                    service2.Update(authorizedToken.Id);
+            //        service2.Update(authorizedToken.Id);
                     return NotFound();
                 }
-                service2.Update(authorizedToken.Id);
+             //   service2.Update(authorizedToken.Id);
                 return Ok(users);
             }
-            return BadRequest();
+          //  return BadRequest();
         }
 
         public IHttpActionResult GetLogIn(string username, string password)
@@ -109,27 +112,38 @@ namespace WebAPI.Controllers
 
         public IHttpActionResult GetUser(int id)
         {
-            var token = HttpContext.Current.Request.Headers["TokenText"];
+          /*  var token = HttpContext.Current.Request.Headers["TokenText"];
             var service2 = new TokenService();
             var authorizedToken = service2.IsAuthorized(token);
             if (authorizedToken != null)
-            {
+            {*/
                 if (!ModelState.IsValid)
                 {
-                    service2.Update(authorizedToken.Id);
+                   // service2.Update(authorizedToken.Id);
                     return BadRequest();
                 }
                 var service = new UserService();
                 var user = service.GetUser(id);
                 if (user == null)
                 {
-                    service2.Update(authorizedToken.Id);
+                   // service2.Update(authorizedToken.Id);
                     return NotFound();
                 }
-                service2.Update(authorizedToken.Id);
+               // service2.Update(authorizedToken.Id);
                 return Ok(user);
-            }
-            return BadRequest();
+           // }
+          //  return BadRequest();
         }
+
+        
+        [HttpGet]
+        public async Task<UserFacebookModel> get()
+        {
+            FacebookService fs = new FacebookService();
+            return await fs.GetFbUserDetails();
+        }
+
+
     }
+    
 }

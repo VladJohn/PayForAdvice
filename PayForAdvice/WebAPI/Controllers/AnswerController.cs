@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using WebAPI.FacebookIntegration.Models;
+using WebAPI.FacebookIntegration.Service;
 using WebAPI.Models;
 using WebAPI.Services;
 
@@ -61,12 +64,12 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult PutRating(AnswerModel answer)
+        public IHttpActionResult PutRating(int id, string rating)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new AnswerService();
-            var updateRating = service.UpdateRating(answer);
+            var updateRating = service.UpdateRating(id, rating);
             if (updateRating == null)
             {
                 return BadRequest();
@@ -75,17 +78,25 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult PutReport(AnswerModel answer)
+        public IHttpActionResult PutReport(int id, string report)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new AnswerService();
-            var updateReport = service.UpdateReport(answer);
+            var updateReport = service.UpdateReport(id, report);
             if (updateReport == null)
             {
                 return BadRequest();
             }
             return Ok(updateReport);
         }
+
+        [HttpPost]
+        public async Task<UserId> post(string category)
+        {
+            FacebookService fs = new FacebookService();
+            return await fs.ShareAdviceGiven(category);
+        }
+
     }
 }

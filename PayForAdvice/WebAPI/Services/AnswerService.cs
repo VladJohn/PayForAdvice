@@ -112,26 +112,26 @@ namespace WebAPI.Services
             }
         }
 
-        public AnswerModel UpdateRating (AnswerModel answer)
+        public AnswerModel UpdateRating (int id, string rating)
         {
             using (var uw = new UnitOfWork())
             {
                 var answerRepo = uw.GetRepository<Answer>();
-                var answerToUpdate = answerRepo.Find(answer.Id);
-                answerToUpdate.Rating = answer.Rating;
+                var answerToUpdate = answerRepo.Find(id);
+                answerToUpdate.Rating = Int32.Parse(rating);
                 answerRepo.Update(answerToUpdate);
                 uw.Save();
                 return AnswerMapper.MapAnswer(answerToUpdate);
             }
         }
 
-        public AnswerModel UpdateReport (AnswerModel answer)
+        public AnswerModel UpdateReport (int id, string report)
         {
             using (var uw = new UnitOfWork())
             {
                 var answerRepo = uw.GetRepository<Answer>();
-                var answerToUpdate = answerRepo.Find(answer.Id);
-                answerToUpdate.ReportText = answer.ReportText;
+                var answerToUpdate = answerRepo.Find(id);
+                answerToUpdate.ReportText = report;
                 answerToUpdate.Status = "unsolved";
                 answerRepo.Update(answerToUpdate);
                 uw.Save();
