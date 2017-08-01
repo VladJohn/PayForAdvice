@@ -93,7 +93,7 @@ namespace WebAPI.Services
                 var questionList = questionRepo.GetAll();
                 foreach (var question in questionList)
                 {
-                    if (question.UserId == idQuestion)
+                    if (question.Id == idQuestion)
                     {
                         var q = QuestionMapper.MapQuestion(question);
                         return q;

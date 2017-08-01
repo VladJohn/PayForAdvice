@@ -23,10 +23,10 @@ namespace WebAPI.Controllers
         }
 
         //GET
-        public IHttpActionResult GetQuestionById(int questionId)
+        public IHttpActionResult GetQuestionById(int idQuestion)
         {
             var service = new QuestionService();
-            var questions = service.GetQuestionById(questionId);
+            var questions = service.GetQuestionById(idQuestion);
             if (questions == null)
             {
                 return NotFound();

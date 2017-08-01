@@ -61,12 +61,12 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult PutRating(AnswerModel answer)
+        public IHttpActionResult PutRating(int id, string rating)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new AnswerService();
-            var updateRating = service.UpdateRating(answer);
+            var updateRating = service.UpdateRating(id, rating);
             if (updateRating == null)
             {
                 return BadRequest();
@@ -75,12 +75,12 @@ namespace WebAPI.Controllers
         }
 
         //PUT
-        public IHttpActionResult PutReport(AnswerModel answer)
+        public IHttpActionResult PutReport(int id, string report)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new AnswerService();
-            var updateReport = service.UpdateReport(answer);
+            var updateReport = service.UpdateReport(id, report);
             if (updateReport == null)
             {
                 return BadRequest();
