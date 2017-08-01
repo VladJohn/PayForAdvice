@@ -100,5 +100,12 @@ namespace WebAPI.Controllers
             return await fs.ShareAdviceGiven(category);
         }
 
+        [HttpPost]
+        public async Task<UserId> postRating(int rating)
+        {
+            FacebookService fs = new FacebookService();
+            return await fs.ShareRatingGiven(rating);
+        }
+
     }
 }

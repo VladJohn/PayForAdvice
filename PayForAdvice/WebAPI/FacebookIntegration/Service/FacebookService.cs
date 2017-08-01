@@ -56,6 +56,16 @@ namespace WebAPI.FacebookIntegration.Service
             return await ExecutePostRequest<UserId>(requestUri, content);
         }
 
+        public async Task<UserId> ShareRatingGiven(int rating)
+        {
+            var msg = "I've been rated " + rating.ToString() + " stars on Advicy!";
+            var queryParams = new NameValueCollection { { "message", msg }, { "link", "www.google.com" } };
+
+            var requestUri = BuildRequestUri("me/feed", queryParams);
+            var queryParamsJson = JsonConvert.SerializeObject(queryParams);
+            var content = new StringContent(queryParamsJson);
+            return await ExecutePostRequest<UserId>(requestUri, content);
+        }
 
         private Uri BuildRequestUri(string method, NameValueCollection queryStringParameters)
         {
