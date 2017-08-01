@@ -92,8 +92,10 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<UserId> post(string category)
+        public async Task<UserId> post(int idAnswer)
         {
+            AnswerService s = new AnswerService();
+            var category = s.getCategoryByAnswerId(idAnswer);
             FacebookService fs = new FacebookService();
             return await fs.ShareAdviceGiven(category);
         }
