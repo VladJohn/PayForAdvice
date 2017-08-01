@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using WebAPI.FacebookIntegration.Models;
 
 namespace WebAPI.FacebookIntegration.Service
 {
@@ -15,8 +16,8 @@ namespace WebAPI.FacebookIntegration.Service
         public const string ApiVersion = "2.10";
 
         //Luiza
-        //private const string AppId = "295726730896928";
-        //private const string AppSecret = "ecbcc5a8fe2b5d6c713aa4e4c87f28bc";
+        private const string AppId = "295726730896928";
+        private const string AppSecret = "ecbcc5a8fe2b5d6c713aa4e4c87f28bc";
 
         //Vlad
         //private const string AppId = "128919027720116";
@@ -30,12 +31,33 @@ namespace WebAPI.FacebookIntegration.Service
 
 
         private const string AccessToken =
-                "EAACEdEose0cBAGie8572GDNpODAfIIms7sZCiGQWVuZC4AfVRtuG8FWZAZBvrKcHq7ouGwr1ZB55iv2TOhW4qInPfu75jRn5ZCu8F3FbZATVZAoPda5t3vmNrKAgs06fQJqwhrb6kmsZBvw8rCYBJIt5uUfixqUH6uFlOr5yTWZC6aV4chP9awF4PmWiE2b4EWpssZD"
+                "EAACEdEose0cBAPJwZBy9loWEYzUVhIAZBakpPCgBZCkTVslPoKxG9LFGLs5qBqFevkOFzI2Q8TIfwLTTjYGqZCEreZBGUfKIxHmeWUIlKIpx8LKUkRRTVfC4YczvuGR6wlZAAtqj45ELy3lzepuEz93WIyUZBZCIlLPRnDgvaWvtITdtM0ermkh7E8msBEPmZAgsZD"
             ;
 
         private static readonly HttpClient HttpClient = new HttpClient();
 
-        public Uri BuildRequestUri(string method, NameValueCollection queryStringParameters)
+
+        public async Task<UserFacebookModel> GetFbUserDetails()
+        {
+            var queryParams = new NameValueCollection { { "fields", "id,name,email,picture.width(300).height(300)" } };
+
+            var requestUri = BuildRequestUri("me", queryParams);
+            return await ExecuteGetRequest<UserFacebookModel>(requestUri);
+        }
+
+        public async Task<UserId> ShareAdviceGiven(string categoryJson)
+        {
+            var msg = "Someone gave me advice on the topic of " + JsonConvert.DeserializeObject(categoryJson);
+            var queryParams = new NameValueCollection { { "message", msg }, {"link","www.google.com" } };
+
+            var requestUri = BuildRequestUri("me/feed", queryParams);
+            var queryParamsJson = JsonConvert.SerializeObject(queryParams);
+            var content = new StringContent(queryParamsJson);
+            return await ExecutePostRequest<UserId>(requestUri, content);
+        }
+
+
+        private Uri BuildRequestUri(string method, NameValueCollection queryStringParameters)
         {
             var baseUri = new Uri(BaseUrl);
             var uri = new Uri(baseUri, $"/v{ApiVersion}/{method}");
@@ -51,7 +73,7 @@ namespace WebAPI.FacebookIntegration.Service
             return uriBuilder.Uri;
         }
 
-        public async Task<T> ExecuteGetRequest<T>(Uri uri)
+        private async Task<T> ExecuteGetRequest<T>(Uri uri)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
@@ -71,7 +93,7 @@ namespace WebAPI.FacebookIntegration.Service
             }
         }
 
-        public async Task<T> ExecutePostRequest<T>(Uri uri, HttpContent httpContent)
+        private async Task<T> ExecutePostRequest<T>(Uri uri, HttpContent httpContent)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
             //var content = new StringContent();
