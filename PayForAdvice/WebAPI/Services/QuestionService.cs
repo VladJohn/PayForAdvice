@@ -83,5 +83,24 @@ namespace WebAPI.Services
             }
             return result;
         }
+
+        public QuestionModel GetQuestionById(int idQuestion)
+        {
+            var result = new QuestionModel();
+            using (var uw = new UnitOfWork())
+            {
+                var questionRepo = uw.GetRepository<Question>();
+                var questionList = questionRepo.GetAll();
+                foreach (var question in questionList)
+                {
+                    if (question.UserId == idQuestion)
+                    {
+                        var q = QuestionMapper.MapQuestion(question);
+                        return q;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }
