@@ -21,6 +21,19 @@ namespace WebAPI.Controllers
             }
             return Ok(questions);
         }
+
+        //GET
+        public IHttpActionResult GetQuestionById(int questionId)
+        {
+            var service = new QuestionService();
+            var questions = service.GetQuestionById(questionId);
+            if (questions == null)
+            {
+                return NotFound();
+            }
+            return Ok(questions);
+        }
+
         //sort the questions by the status
         public IHttpActionResult GetQuestionsByStatus(int IdUser)
         {
