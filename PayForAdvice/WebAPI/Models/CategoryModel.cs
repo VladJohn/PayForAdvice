@@ -18,5 +18,6 @@ namespace WebAPI.Models
         public string Description { get; set; }
         [Required]
         public string ImageUrl { get; set; }
+        public string IconUrl { get; set; }
     }
 }
