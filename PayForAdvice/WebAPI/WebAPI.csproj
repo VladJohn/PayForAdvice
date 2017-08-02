@@ -231,6 +231,7 @@
     <Compile Include="Models\UserModelForCategoryView.cs" />
     <Compile Include="Models\UserModelForProfile.cs" />
     <Compile Include="Models\UserModelForSignUp.cs" />
+    <Compile Include="Models\UserTokenDataModel.cs" />
     <Compile Include="Packages\ResponsePackage.cs" />
     <Compile Include="Packages\ResponseWrappingHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
