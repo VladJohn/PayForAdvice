@@ -108,6 +108,8 @@ namespace WebAPI.Services
                         rating += a.Rating;
                     }
                 }
+                if (user.Answers.Count == 0)
+                    return 0;
                 rating = rating / user.Answers.Count;
             }
             return rating;
