@@ -16,12 +16,12 @@ namespace WebAPI.FacebookIntegration.Service
         public const string ApiVersion = "2.10";
 
         //Luiza
-        //private const string AppId = "295726730896928";
-        //private const string AppSecret = "ecbcc5a8fe2b5d6c713aa4e4c87f28bc";
+        private const string AppId = "295726730896928";
+        private const string AppSecret = "ecbcc5a8fe2b5d6c713aa4e4c87f28bc";
 
         //Vlad
-        private const string AppId = "128919027720116";
-        private const string AppSecret = "cc0e61fc3c34b4ebbc2bf573290aeb9c";
+       // private const string AppId = "128919027720116";
+       // private const string AppSecret = "cc0e61fc3c34b4ebbc2bf573290aeb9c";
 
         //Alexandra
         //private const string AppId = "1900019420271415";
@@ -31,7 +31,7 @@ namespace WebAPI.FacebookIntegration.Service
 
 
         private const string AccessToken =
-                "EAACEdEose0cBAB912DzIFA5zperUyCIbF70jCe3cyQrZB7ZATI0qeYm6zZB7DySN00cN9oUnnOjjmDNsTbOBwEKnQFqZAMgZBawagRLoRKG6pEnDVWVcSIfaszq4sl3spCxuId3mhFOOqQb9HgT1XBZCUA57pORvhaHp5d4grO8MyDhAOt2eJcgVxlkaNDlPYZD"
+                "EAACEdEose0cBAEXIEVh3LyytpPwzt3M0W52jfeWIC4LZApYKdjYa64UYIbQjQZByYTmwZAQ8gCtn5rdtxRfeIYMk3IJ2ZBOJZC3OTx7rnyrlDHFRiGqbcNS8GmZAXhC1RqTZAVZB4HPVhyhPGRj10A7zmG7PYPyviIsvYdvKpbTh8qpkufOlVmPQrBAvSXboO70ZD"
             ;
 
         private static readonly HttpClient HttpClient = new HttpClient();

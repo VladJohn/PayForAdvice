@@ -143,7 +143,29 @@ namespace WebAPI.Controllers
             return await fs.GetFbUserDetails();
         }
 
-
+        public IHttpActionResult GetUserData(string something)
+        {
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var service2 = new TokenService();
+            var authorizedToken = service2.IsAuthorized(token);
+            if (authorizedToken != null)
+            {
+                if (!ModelState.IsValid)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return BadRequest();
+                }
+                var userdata = service2.getInfoByToken(token);
+                if (userdata == null)
+                {
+                    service2.Update(authorizedToken.Id);
+                    return NotFound();
+                }
+                service2.Update(authorizedToken.Id);
+                return Ok(userdata);
+            }
+            return BadRequest();
+        }
     }
     
 }
