@@ -102,5 +102,29 @@ namespace WebAPI.Services
             }
             return null;
         }
+
+        public List<QuestionModel> getAdvicerAnsweredQuestions(int idAdvicer)
+        {
+            var result = new List<QuestionModel>();
+            using (var uw = new UnitOfWork())
+            {
+                var answerRepo = uw.GetRepository<Answer>();
+                var questionRepo = uw.GetRepository<Question>();
+                var answerList = answerRepo.GetAll();
+                foreach (var answer in answerList)
+                {
+                    if (answer.UserId == idAdvicer)
+                    {
+                        var found = questionRepo.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId)).ToList();
+                        foreach (var question in found)
+                        {
+                            var a = QuestionMapper.MapQuestion(question);
+                            result.Add(a);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
     }
 }
