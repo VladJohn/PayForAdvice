@@ -16,12 +16,12 @@ namespace WebAPI.FacebookIntegration.Service
         public const string ApiVersion = "2.10";
 
         //Luiza
-        private const string AppId = "295726730896928";
-        private const string AppSecret = "ecbcc5a8fe2b5d6c713aa4e4c87f28bc";
+        //private const string AppId = "295726730896928";
+        //private const string AppSecret = "ecbcc5a8fe2b5d6c713aa4e4c87f28bc";
 
         //Vlad
-       // private const string AppId = "128919027720116";
-       // private const string AppSecret = "cc0e61fc3c34b4ebbc2bf573290aeb9c";
+        private const string AppId = "128919027720116";
+        private const string AppSecret = "cc0e61fc3c34b4ebbc2bf573290aeb9c";
 
         //Alexandra
         //private const string AppId = "1900019420271415";
