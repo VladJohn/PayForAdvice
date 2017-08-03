@@ -24,19 +24,33 @@ public class PriceService
         return newPrice;
     }
 
-    public List<PriceModel> GetAllPricesByUser(int idUser)
+    public PriceModelForPublicProfile GetAllPricesByUser(int idUser)
     {
+        PriceModelForPublicProfile res = new PriceModelForPublicProfile();
         using (var uw = new UnitOfWork())
         {
             var repo = uw.GetRepository<Price>();
             var listUser = repo.GetAll().ToList().Where(x => x.UserId == idUser).ToList();
             var listPrice = new List<PriceModel>();
-            foreach (var user in listUser)
+            foreach (var price in listUser)
             {
-                var userPrice = PriceMapper.MapPrice(user);
-                listPrice.Add(userPrice);
+                if (price.Order.Equals("base"))
+                {
+                    res.Base = price.Amount;
+                    res.DetailBase = price.Details;
+                }
+                if (price.Order.Equals("normal"))
+                {
+                    res.Normal = price.Amount;
+                    res.DetailNormal = price.Details;
+                }
+                if (price.Order.Equals("premium"))
+                {
+                    res.Premium = price.Amount;
+                    res.DetailPremium = price.Details;
+                }
             }
-            return listPrice;
+            return res;
         }
     }
 
@@ -45,7 +59,20 @@ public class PriceService
         using (var uw = new UnitOfWork())
         {
             var repo = uw.GetRepository<Price>();
-            repo.Update(PriceMapper.MapPriceDataModel(updatePrice));
+            var found =  repo.GetAll().Where(x => x.Order == updatePrice.Order && x.UserId == updatePrice.UserId).FirstOrDefault();
+            if (found != null)
+            {
+                found.Amount = updatePrice.Amount;
+                found.Order = updatePrice.Order;
+                found.Details = updatePrice.Details;
+                found.UserId = updatePrice.UserId;
+                repo.Update(found);
+            }
+            else
+            {
+                var price = new Price { Amount = updatePrice.Amount, Details = updatePrice.Details, Order = updatePrice.Order, UserId = updatePrice.UserId};
+                repo.Add(price);
+            }
             uw.Save();
             return updatePrice;
         }

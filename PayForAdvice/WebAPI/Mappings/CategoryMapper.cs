@@ -11,12 +11,12 @@ namespace WebAPI.Mappings
     {
         public static CategoryModel MapCategory (Category category)
         {
-            return new CategoryModel { Description = category.Description, Id = category.Id, ImageUrl = category.ImageUrl, Name = category.Name };
+            return new CategoryModel { Description = category.Description, Id = category.Id, ImageUrl = category.ImageUrl, Name = category.Name, IconUrl = category.IconUrl };
         }
 
         public static Category MapCategoryDataModel (CategoryModel category)
         {
-            return new Category { Id = category.Id, Name = category.Name, ImageUrl = category.ImageUrl, Description = category.Description };
+            return new Category { Id = category.Id, Name = category.Name, ImageUrl = category.ImageUrl, Description = category.Description, IconUrl = category.IconUrl };
         }
     }
 }

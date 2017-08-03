@@ -218,6 +218,7 @@
     <Compile Include="Mappings\QuestionMapper.cs" />
     <Compile Include="Mappings\RoleMapper.cs" />
     <Compile Include="Mappings\UploadMapper.cs" />
+    <Compile Include="Models\PriceModelForPublicProfile.cs" />
     <Compile Include="Mappings\UserMapper.cs" />
     <Compile Include="Models\AnswerModel.cs" />
     <Compile Include="Models\CategoryModel.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Models\UserModelForCategoryView.cs" />
     <Compile Include="Models\UserModelForProfile.cs" />
     <Compile Include="Models\UserModelForSignUp.cs" />
+    <Compile Include="Models\UserTokenDataModel.cs" />
     <Compile Include="Packages\ResponsePackage.cs" />
     <Compile Include="Packages\ResponseWrappingHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

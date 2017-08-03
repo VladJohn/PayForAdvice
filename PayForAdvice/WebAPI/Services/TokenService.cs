@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebAPI.Models;
 
 namespace WebAPI.Services
 {
@@ -82,6 +83,25 @@ namespace WebAPI.Services
                 uw.Save();
             }
                
+        }
+
+        public UserTokenDataModel getInfoByToken(string token)
+        {
+            UserTokenDataModel result = new UserTokenDataModel();
+            using (var uw = new UnitOfWork())
+            {
+                var tokenRepo = uw.GetRepository<Token>();
+                foreach (var t in tokenRepo.GetAll())
+                {
+                    if (t.TokenText.Equals(token))
+                    {
+                        result.Id = t.User.Id;
+                        result.Role = t.User.RoleId;
+                        return result;
+                    }
+                }
+            }
+            return result;
         }
     }
 }

@@ -37,6 +37,19 @@ namespace WebAPI.Controllers
             return Ok(answer);
         }
 
+        public IHttpActionResult GetAnAnswerByQuestionIdPending(int idQuestionPending)
+        {
+            var service = new AnswerService();
+            var answer = service.GetAnAnswerByQuestionIdPending(idQuestionPending);
+            if (answer == null)
+            {
+                return NotFound();
+            }
+            return Ok(answer);
+        }
+
+        
+
         //GET
         public IHttpActionResult GetAllAnswersByUnsolvedReports()
         {
@@ -92,10 +105,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<UserId> post(string category)
+        public async Task<UserId> post(int idAnswer)
         {
+            AnswerService s = new AnswerService();
+            var category = s.getCategoryByAnswerId(idAnswer);
             FacebookService fs = new FacebookService();
             return await fs.ShareAdviceGiven(category);
+        }
+
+        [HttpPost]
+        public async Task<UserId> postRating(int rating)
+        {
+            FacebookService fs = new FacebookService();
+            return await fs.ShareRatingGiven(rating);
         }
 
     }
