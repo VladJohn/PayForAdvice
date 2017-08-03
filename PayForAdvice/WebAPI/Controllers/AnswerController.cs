@@ -37,6 +37,19 @@ namespace WebAPI.Controllers
             return Ok(answer);
         }
 
+        public IHttpActionResult GetAnAnswerByQuestionIdPending(int idQuestionPending)
+        {
+            var service = new AnswerService();
+            var answer = service.GetAnAnswerByQuestionIdPending(idQuestionPending);
+            if (answer == null)
+            {
+                return NotFound();
+            }
+            return Ok(answer);
+        }
+
+        
+
         //GET
         public IHttpActionResult GetAllAnswersByUnsolvedReports()
         {

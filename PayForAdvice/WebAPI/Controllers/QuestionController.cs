@@ -82,5 +82,17 @@ namespace WebAPI.Controllers
             }
             return Ok(questions);
         }
+
+        public IHttpActionResult GetAdvicerPendingQuestions(int idAdvicerForPending)
+        {
+            var service = new QuestionService();
+            var questions = service.getAdvicerPendingQuestions(idAdvicerForPending);
+            if (questions == null)
+            {
+                return NotFound();
+            }
+            return Ok(questions);
+        }
+
     }
 }

@@ -115,7 +115,7 @@ namespace WebAPI.Services
                 {
                     if (answer.UserId == idAdvicer)
                     {
-                        var found = questionRepo.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId)).ToList();
+                        var found = questionRepo.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status=="solved").ToList();
                         foreach (var question in found)
                         {
                             var a = QuestionMapper.MapQuestion(question);
@@ -126,5 +126,30 @@ namespace WebAPI.Services
             }
             return result;
         }
+
+        public List<QuestionModel> getAdvicerPendingQuestions(int idAdvicer)
+        {
+            var result = new List<QuestionModel>();
+            using (var uw = new UnitOfWork())
+            {
+                var answerRepo = uw.GetRepository<Answer>();
+                var questionRepo = uw.GetRepository<Question>();
+                var answerList = answerRepo.GetAll();
+                foreach (var answer in answerList)
+                {
+                    if (answer.UserId == idAdvicer)
+                    {
+                        var found = questionRepo.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == "pending").ToList();
+                        foreach (var question in found)
+                        {
+                            var a = QuestionMapper.MapQuestion(question);
+                            result.Add(a);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
     }
 }
