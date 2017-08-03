@@ -170,18 +170,18 @@ namespace WebAPI.Controllers
         }
 
 
-        public IHttpActionResult SignInCallBack(string code)
+        public ActionResult SignInCallBack(string code)
         {
-            //var callbackUrl = Url.Link("ConfirmEmail", "user", new { code = code }, Request.RequestUri.Scheme);
-            return Ok(code);
+            //var callbackUrl = Url.Action("ConfirmEmail", "user", new { code = code }, Request.RequestUri.Scheme);
+            return new RedirectResult(code);
         }
 
         [System.Web.Mvc.HttpPost]
         public ActionResult Login(string returnUrl)
         {
             var appId = "128919027720116";
-            var redirectUri = "http://localhost:8080/user/?code=";
-            var uri = $"https://www.facebook.com/v2.10/dialog/oauth?client_id={appId}&redirect_uri={redirectUri}";
+            var redirectUri = "http://localhost:8080/User/SignInCallBack";
+            var uri = $"https://www.facebook.com/v2.10/dialog/oauth?client_id={appId}&redirect_uri={redirectUri}&response_type=token";
             return new RedirectResult(uri);
         }
     }
