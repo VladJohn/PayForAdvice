@@ -90,6 +90,35 @@ namespace WebAPI.Services
             return null;
         }
 
+        public AnswerModel GetAnAnswerByQuestionIdPending(int idQuestion)
+        {
+            using (var uw = new UnitOfWork())
+            {
+                var answerRepo = uw.GetRepository<Answer>();
+                var questionRepo = uw.GetRepository<Question>();
+                var answerList = answerRepo.GetAll();
+                var questionList = questionRepo.GetAll();
+                foreach (var question in questionList)
+                {
+                    if (question.Id == idQuestion)
+                    {
+                        if (question.Status.Equals("pending"))
+                        {
+                            foreach (var answer in answerList)
+                            {
+                                if (answer.QuestionId == idQuestion)
+                                {
+                                    var a = AnswerMapper.MapAnswer(answer);
+                                    return a;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         public AnswerModel UpdateAnswer(AnswerModel answer)
         {
             using (var uw = new UnitOfWork())
@@ -97,12 +126,10 @@ namespace WebAPI.Services
                 var answerRepo = uw.GetRepository<Answer>();
                 var questionRepo = uw.GetRepository<Question>();
                 var answerToUpdate = answerRepo.Find(answer.Id);
-                var questionToUpdate = questionRepo.Find(answer.QuestionId);
+                var questionToUpdate = questionRepo.Find(answerToUpdate.QuestionId);
 
                 answerToUpdate.AnswerText = answer.AnswerText;
                 answerToUpdate.Date = DateTime.Now;
-                answerToUpdate.QuestionId = answer.QuestionId;
-                answerToUpdate.UserId = answer.UserId;
                 questionToUpdate.Status = "solved";
 
                 answerRepo.Update(answerToUpdate);
