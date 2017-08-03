@@ -45,7 +45,20 @@ public class PriceService
         using (var uw = new UnitOfWork())
         {
             var repo = uw.GetRepository<Price>();
-            repo.Update(PriceMapper.MapPriceDataModel(updatePrice));
+            var found =  repo.GetAll().Where(x => x.Order == updatePrice.Order && x.UserId == updatePrice.UserId).FirstOrDefault();
+            if (found != null)
+            {
+                found.Amount = updatePrice.Amount;
+                found.Order = updatePrice.Order;
+                found.Details = updatePrice.Details;
+                found.UserId = updatePrice.UserId;
+                repo.Update(found);
+            }
+            else
+            {
+                var price = new Price { Amount = updatePrice.Amount, Details = updatePrice.Details, Order = updatePrice.Order, UserId = updatePrice.UserId};
+                repo.Add(price);
+            }
             uw.Save();
             return updatePrice;
         }
