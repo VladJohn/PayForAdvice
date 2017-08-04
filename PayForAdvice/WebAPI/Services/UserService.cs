@@ -96,6 +96,7 @@ namespace WebAPI.Services
 
         public double GetRatingForUser(int idUser)
         {
+            int counter = 0;
             double rating = 0;
             using (var uw = new UnitOfWork())
             {
@@ -106,12 +107,15 @@ namespace WebAPI.Services
                     foreach (var a in user.Answers)
                     {
                         rating += a.Rating;
+                        if (a.Rating != 0)
+                            counter++;
                     }
                 }
-                if (user.Answers.Count == 0)
+                if (counter == 0)
                     return 0;
-                rating = rating / user.Answers.Count;
+                rating = rating / counter;
             }
+            rating = Math.Round(rating, 2);
             return rating;
         }
 
