@@ -64,6 +64,10 @@
     <Compile Include="Migrations\201708020810297_category-icon.Designer.cs">
       <DependentUpon>201708020810297_category-icon.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201708040731445_Upgrade.cs" />
+    <Compile Include="Migrations\201708040731445_Upgrade.Designer.cs">
+      <DependentUpon>201708040731445_Upgrade.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -88,6 +92,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201708020810297_category-icon.resx">
       <DependentUpon>201708020810297_category-icon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708040731445_Upgrade.resx">
+      <DependentUpon>201708040731445_Upgrade.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

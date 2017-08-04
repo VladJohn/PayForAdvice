@@ -23,10 +23,25 @@ namespace WebAPI.Controllers
         }
 
         //GET
-        public IHttpActionResult GetQuestionById(int idQuestion)
+        public IHttpActionResult GetAllQuestionsByUserIdSortedByCriteria(int userIdForSorting, string sorter)
         {
             var service = new QuestionService();
-            var questions = service.GetQuestionById(idQuestion);
+            List<QuestionModel> questions = new List<QuestionModel>();
+            if(sorter.Equals("normal"))
+            {
+                questions = service.GetAllQuestionsByUserId(userIdForSorting);
+            }
+            else
+            {
+                if(sorter.Equals("state"))
+                {
+                    questions = service.GetQuestionsByStatus(userIdForSorting);
+                }
+                else
+                {
+                    questions = service.GetQuestionsByDate(userIdForSorting);
+                }
+            }
             if (questions == null)
             {
                 return NotFound();
@@ -34,22 +49,11 @@ namespace WebAPI.Controllers
             return Ok(questions);
         }
 
-        //sort the questions by the status
-        public IHttpActionResult GetQuestionsByStatus(int IdUser)
+        //GET
+        public IHttpActionResult GetQuestionById(int idQuestion)
         {
             var service = new QuestionService();
-            var questions = service.GetQuestionsByStatus(IdUser);
-            if (questions == null)
-            {
-                return NotFound();
-            }
-            return Ok(questions);
-        }
-        //sort the questions by date
-        public IHttpActionResult GetQuestionsByDate(int IdUsers)
-        {
-            var service = new QuestionService();
-            var questions = service.GetQuestionsByDate(IdUsers);
+            var questions = service.GetQuestionById(idQuestion);
             if (questions == null)
             {
                 return NotFound();

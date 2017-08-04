@@ -11,12 +11,12 @@ namespace WebAPI.Mappings
     {
         public static QuestionModel MapQuestion (Question question)
         {
-            return new QuestionModel { Id = question.Id, Date = Convert.ToDateTime(question.Date), QuestionText = question.QuestionText, Status = question.Status, UserId = question.UserId };
+            return new QuestionModel { Id = question.Id, Date = Convert.ToDateTime(question.Date), QuestionText = question.QuestionText, Status = question.Status, UserId = question.UserId, Order=question.Order };
         }
 
         public static Question MapQuestionDataModel(QuestionModel question)
         {
-            return new Question { Id = question.Id, UserId = question.UserId, Status = question.Status, QuestionText = question.QuestionText, Date = question.Date };
+            return new Question { Id = question.Id, UserId = question.UserId, Status = question.Status, QuestionText = question.QuestionText, Date = question.Date, Order=question.Order };
         }
     }
 }
