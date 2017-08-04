@@ -151,5 +151,19 @@ namespace WebAPI.Services
             return result;
         }
 
+        public QuestionModel MarkQuestionAsRefunded(int idQuestion)
+        {
+            using (var uw = new UnitOfWork())
+            {
+                var questionRepo = uw.GetRepository<Question>();
+                var question = questionRepo.Find(idQuestion);
+                question.Status = "refunded";
+                questionRepo.Update(question);
+                uw.Save();
+                return QuestionMapper.MapQuestion(question);
+            }
+            
+        }
+
     }
 }
