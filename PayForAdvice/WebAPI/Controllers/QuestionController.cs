@@ -94,5 +94,21 @@ namespace WebAPI.Controllers
             return Ok(questions);
         }
 
+
+        //PUT
+        public IHttpActionResult PutQuestion(int idQuestion)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var service = new QuestionService();
+            var updatedQ = service.MarkQuestionAsRefunded(idQuestion);
+            if (updatedQ == null)
+            {
+                return BadRequest();
+            }
+            return Ok(updatedQ);
+        }
+
+
     }
 }
