@@ -157,7 +157,7 @@ namespace WebAPI.Services
                 var answerRepo = uw.GetRepository<Answer>();
                 var answerToUpdate = answerRepo.Find(id);
                 answerToUpdate.ReportText = report;
-                answerToUpdate.Status = "unsolved";
+                answerToUpdate.Status = "reported";
                 answerRepo.Update(answerToUpdate);
                 uw.Save();
                 return AnswerMapper.MapAnswer(answerToUpdate);
