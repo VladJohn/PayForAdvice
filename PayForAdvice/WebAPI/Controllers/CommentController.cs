@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
         public IHttpActionResult GetAllCommentsForQuestionId(int questionId)
         {
             var service = new CommentService();
-            var comments = service.GetAllCommentsForQuestionId(questionId);
+            var comments = service.GetAllCommentsByQuestionId(questionId);
             if (comments == null)
             {
                 return NotFound();
@@ -28,7 +28,7 @@ namespace WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new CommentService();
-            var addComent = service.Add(comment);
+            var addComent = service.AddComment(comment);
             if (addComent == null)
             {
                 return BadRequest();

@@ -23,9 +23,7 @@ namespace Repository
 
         public DatabaseContext() : base("name = DatabaseContext")
         {
-            // Database.SetInitializer<DatabaseContext>(new CreateDatabaseIfNotExists<DatabaseContext>());
             this.Configuration.AutoDetectChangesEnabled = true;
-            // this.Configuration.LazyLoadingEnabled = true;
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

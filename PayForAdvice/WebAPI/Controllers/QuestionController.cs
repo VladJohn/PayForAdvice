@@ -68,7 +68,7 @@ namespace WebAPI.Controllers
             var service = new QuestionService();
             var serviceAnswers = new AnswerService();
             var addQuestion = service.Add(question);
-            serviceAnswers.AddEmpty(addQuestion.Id, idResponder);
+            serviceAnswers.AddEmptyAnswer(addQuestion.Id, idResponder);
             if (addQuestion == null)
             {
                 return BadRequest();

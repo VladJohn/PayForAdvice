@@ -11,29 +11,29 @@ namespace WebAPI.Service
 {
     public class CategoryService
     {
-        public CategoryModel Add(CategoryModel newCategory)
+        public CategoryModel AddCategory(CategoryModel newCategory)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<Category>();
-                repo.Add(CategoryMapper.MapCategoryDataModel(newCategory));
-                uw.Save();
+                var categoryRepository = unitOfWork.GetRepository<Category>();
+                categoryRepository.Add(CategoryMapper.MapCategoryDataModel(newCategory));
+                unitOfWork.Save();
             }
             return newCategory;
         }
 
         public List<CategoryModel> GetAllCategories()
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<Category>();
-                var categories = new List<CategoryModel>();
-                foreach (var element in repo.GetAll())
+                var categoryRepository = unitOfWork.GetRepository<Category>();
+                var categoryModels = new List<CategoryModel>();
+                foreach (var category in categoryRepository.GetAll())
                 {
-                    var categoryElement = CategoryMapper.MapCategory(element);
-                    categories.Add(categoryElement);
+                    var categoryModel = CategoryMapper.MapCategory(category);
+                    categoryModels.Add(categoryModel);
                 }
-                return categories;
+                return categoryModels;
             }
         }
     }
