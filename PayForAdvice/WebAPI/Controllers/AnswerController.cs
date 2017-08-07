@@ -37,10 +37,10 @@ namespace WebAPI.Controllers
             return Ok(answer);
         }
 
-        public IHttpActionResult GetAnAnswerByQuestionIdPending(int idQuestionPending)
+        public IHttpActionResult GetAPendingAnswerByQuestionId(int idQuestionPending)
         {
             var service = new AnswerService();
-            var answer = service.GetAnAnswerByQuestionIdPending(idQuestionPending);
+            var answer = service.GetAPendingAnswerByQuestionId(idQuestionPending);
             if (answer == null)
             {
                 return NotFound();
@@ -51,10 +51,10 @@ namespace WebAPI.Controllers
         
 
         //GET
-        public IHttpActionResult GetAllAnswersByUnsolvedReports()
+        public IHttpActionResult GetAllAnswersWithUnsolvedReports()
         {
             var service = new AnswerService();
-            var answers = service.GetAllAnswersByUnsolvedReports();
+            var answers = service.GetAllAnswersWithUnsolvedReports();
             if (answers == null)
             {
                 return NotFound();
@@ -82,12 +82,12 @@ namespace WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new AnswerService();
-            var updateRating = service.UpdateRating(id, rating);
-            if (updateRating == null)
+            var updatedAnswer = service.UpdateRating(id, rating);
+            if (updatedAnswer == null)
             {
                 return BadRequest();
             }
-            return Ok(updateRating);
+            return Ok(updatedAnswer);
         }
 
         //PUT
@@ -96,28 +96,28 @@ namespace WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new AnswerService();
-            var updateReport = service.UpdateReport(id, report);
-            if (updateReport == null)
+            var updatedAnswer = service.UpdateReport(id, report);
+            if (updatedAnswer == null)
             {
                 return BadRequest();
             }
-            return Ok(updateReport);
+            return Ok(updatedAnswer);
         }
 
         [HttpPost]
-        public async Task<UserId> post(int idAnswer)
+        public async Task<UserId> PostRecievedAnswerOnFacebook(int idAnswer)
         {
-            AnswerService s = new AnswerService();
-            var category = s.getCategoryByAnswerId(idAnswer);
-            FacebookService fs = new FacebookService();
-            return await fs.ShareAdviceGiven(category);
+            AnswerService service = new AnswerService();
+            var category = service.GetCategoryByAnswerId(idAnswer);
+            FacebookService facebookService = new FacebookService();
+            return await facebookService.ShareAdviceGiven(category);
         }
 
         [HttpPost]
-        public async Task<UserId> postRating(int rating)
+        public async Task<UserId> PostReceivedRatingOnFacebook(int rating)
         {
-            FacebookService fs = new FacebookService();
-            return await fs.ShareRatingGiven(rating);
+            FacebookService facebookService = new FacebookService();
+            return await facebookService.ShareRatingGiven(rating);
         }
 
     }

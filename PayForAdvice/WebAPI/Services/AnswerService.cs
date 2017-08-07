@@ -11,32 +11,33 @@ namespace WebAPI.Services
 {
     public class AnswerService
     {
-        public List<AnswerModel> GetAllAnswersByUserId(int idUser)
+        
+        public List<AnswerModel> GetAllAnswersByUserId(int userId)
         {
-            var result = new List<AnswerModel>();
-            using (var uw = new UnitOfWork())
+            var answerModels = new List<AnswerModel>();
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var answerList = answerRepo.GetAll();
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var answerList = answerRepository.GetAll();
                 foreach (var answer in answerList)
                 {
-                    if (answer.UserId == idUser)
+                    if (answer.UserId == userId)
                     {
-                        var a = AnswerMapper.MapAnswer(answer);
-                        result.Add(a);
+                        var answerModel = AnswerMapper.MapAnswer(answer);
+                        answerModels.Add(answerModel);
                     }
                 }
             }
-            return result;
+            return answerModels;
         }
 
-        public List<AnswerModel> GetAllAnswersByUnsolvedReports()
+        public List<AnswerModel> GetAllAnswersWithUnsolvedReports()
         {
             var result = new List<AnswerModel>();
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var answerList = answerRepo.GetAll();
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var answerList = answerRepository.GetAll();
                 foreach (var answer in answerList)
                 {
                     if (answer.Status == "unsolved")
@@ -49,66 +50,36 @@ namespace WebAPI.Services
             return result;
         }
 
-        public AnswerModel AddEmpty(int idQuestion, int idResponder)
+        public AnswerModel AddEmptyAnswer(int idQuestion, int idResponder)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
+                var answerRepository = unitOfWork.GetRepository<Answer>();
                 var answer = new Answer { AnswerText = "", QuestionId = idQuestion, UserId = idResponder, Date = DateTime.Now, Status = "unreported"};
-                answerRepo.Add(answer);
-                uw.Save();
+                answerRepository.Add(answer);
+                unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answer);
             }
         }
 
         public AnswerModel GetAnAnswerByQuestionId(int idQuestion)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var questionRepo = uw.GetRepository<Question>();
-                var answerList = answerRepo.GetAll();
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var questionRepo = unitOfWork.GetRepository<Question>();
+                var answerList = answerRepository.GetAll();
                 var questionList = questionRepo.GetAll();
                 foreach (var question in questionList)
                 {
                     if (question.Id == idQuestion)
                     {
-                            foreach (var answer in answerList)
-                            {
-                                if (answer.QuestionId == idQuestion)
-                                {
-                                    var a = AnswerMapper.MapAnswer(answer);
-                                    return a;
-                                }
-                            }
-                        
-                    }
-                }
-            }
-            return null;
-        }
-
-        public AnswerModel GetAnAnswerByQuestionIdPending(int idQuestion)
-        {
-            using (var uw = new UnitOfWork())
-            {
-                var answerRepo = uw.GetRepository<Answer>();
-                var questionRepo = uw.GetRepository<Question>();
-                var answerList = answerRepo.GetAll();
-                var questionList = questionRepo.GetAll();
-                foreach (var question in questionList)
-                {
-                    if (question.Id == idQuestion)
-                    {
-                        if (question.Status.Equals("pending"))
+                        foreach (var answer in answerList)
                         {
-                            foreach (var answer in answerList)
+                            if (answer.QuestionId == idQuestion)
                             {
-                                if (answer.QuestionId == idQuestion)
-                                {
-                                    var a = AnswerMapper.MapAnswer(answer);
-                                    return a;
-                                }
+                                var answerModel = AnswerMapper.MapAnswer(answer);
+                                return answerModel;
                             }
                         }
                     }
@@ -117,68 +88,95 @@ namespace WebAPI.Services
             return null;
         }
 
+        public AnswerModel GetAPendingAnswerByQuestionId(int idQuestion)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var questionRepository = unitOfWork.GetRepository<Question>();
+                var answerList = answerRepository.GetAll();
+                var questionList = questionRepository.GetAll();
+                foreach (var question in questionList)
+                {
+                    if (question.Id == idQuestion && question.Status.Equals("pending"))
+                    {
+                        foreach (var answer in answerList)
+                        {
+                            if (answer.QuestionId == idQuestion)
+                            {
+                                var answerModel = AnswerMapper.MapAnswer(answer);
+                                return answerModel;
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            return null;
+        }
+
         public AnswerModel UpdateAnswer(AnswerModel answer)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var questionRepo = uw.GetRepository<Question>();
-                var answerToUpdate = answerRepo.Find(answer.Id);
-                var questionToUpdate = questionRepo.Find(answerToUpdate.QuestionId);
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var questionRepository = unitOfWork.GetRepository<Question>();
+                var answerToUpdate = answerRepository.Find(answer.Id);
+                var questionToUpdate = questionRepository.Find(answerToUpdate.QuestionId);
 
                 answerToUpdate.AnswerText = answer.AnswerText;
                 answerToUpdate.Date = DateTime.Now;
                 questionToUpdate.Status = "solved";
 
-                answerRepo.Update(answerToUpdate);
-                questionRepo.Update(questionToUpdate);
-                uw.Save();
+                answerRepository.Update(answerToUpdate);
+                questionRepository.Update(questionToUpdate);
+                unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answerToUpdate);
             }
         }
 
-        public AnswerModel UpdateRating (int id, string rating)
+        public AnswerModel UpdateRating (int idAnswer, string rating)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var answerToUpdate = answerRepo.Find(id);
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var answerToUpdate = answerRepository.Find(idAnswer);
                 answerToUpdate.Rating = Int32.Parse(rating);
-                answerRepo.Update(answerToUpdate);
-                uw.Save();
+                answerRepository.Update(answerToUpdate);
+                unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answerToUpdate);
             }
         }
 
-        public AnswerModel UpdateReport (int id, string report)
+        public AnswerModel UpdateReport (int idAnswer, string report)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var answerToUpdate = answerRepo.Find(id);
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var answerToUpdate = answerRepository.Find(idAnswer);
                 answerToUpdate.ReportText = report;
-                answerToUpdate.Status = "unsolved";
-                answerRepo.Update(answerToUpdate);
-                uw.Save();
+                answerToUpdate.Status = "reported";
+                answerRepository.Update(answerToUpdate);
+                unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answerToUpdate);
             }
         }
 
-        public string getCategoryByAnswerId(int id)
+        public string GetCategoryByAnswerId(int idAnswer)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var userRepo = uw.GetRepository<User>();
-                foreach (var a in answerRepo.GetAll())
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var userRepository = unitOfWork.GetRepository<User>();
+                foreach (var answer in answerRepository.GetAll())
                 {
-                    if (a.Id == id)
+                    if (answer.Id == idAnswer)
                     {
-                        foreach(var u in userRepo.GetAll())
+                        foreach(var user in userRepository.GetAll())
                         {
-                            if(a.UserId == u.Id)
+                            if(answer.UserId == user.Id)
                             {
-                                return u.Categories.FirstOrDefault().Name;
+                                return user.Categories.FirstOrDefault().Name;
                             }
                         }
                     }
