@@ -11,7 +11,7 @@ namespace WebAPI.Controllers
     public class PriceController : ApiController
     {
         //update
-        public IHttpActionResult Put(PriceModel price)
+        public IHttpActionResult PutPrice(PriceModel price)
         {
             var service = new PriceService();
             var updatePrice = service.UpdatePrice(price);
@@ -21,12 +21,12 @@ namespace WebAPI.Controllers
         }
 
         //add 
-        public IHttpActionResult Post(PriceModel price)
+        public IHttpActionResult PostPrice(PriceModel price)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new PriceService();
-            var addPrice = service.Add(price);
+            var addPrice = service.AddNewPrice(price);
             if (addPrice == null)
                 return BadRequest();
             return Ok(addPrice);

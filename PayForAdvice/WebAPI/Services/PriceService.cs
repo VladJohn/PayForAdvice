@@ -13,67 +13,70 @@ public class PriceService
 	{
 	}
 
-    public PriceModel Add(PriceModel newPrice)
+    //add a new price for an user
+    public PriceModel AddNewPrice(PriceModel newPrice)
     {
-        using (var uw = new UnitOfWork())
+        using (var unitOfWork = new UnitOfWork())
         {
-            var repo = uw.GetRepository<Price>();
-            repo.Add(PriceMapper.MapPriceDataModel(newPrice));
-            uw.Save();
+            var priceRepository = unitOfWork.GetRepository<Price>();
+            priceRepository.Add(PriceMapper.MapPriceDataModel(newPrice));
+            unitOfWork.Save();
         }
         return newPrice;
     }
 
+    //it will return an entity with the prices for a user's category
     public PriceModelForPublicProfile GetAllPricesByUser(int idUser)
     {
-        PriceModelForPublicProfile res = new PriceModelForPublicProfile();
-        using (var uw = new UnitOfWork())
+        PriceModelForPublicProfile userPrices = new PriceModelForPublicProfile();
+        using (var unitOfWork = new UnitOfWork())
         {
-            var repo = uw.GetRepository<Price>();
-            var listUser = repo.GetAll().ToList().Where(x => x.UserId == idUser).ToList();
+            var priceRepository = unitOfWork.GetRepository<Price>();
+            var listUser = priceRepository.GetAll().ToList().Where(x => x.UserId == idUser).ToList();
             var listPrice = new List<PriceModel>();
             foreach (var price in listUser)
             {
                 if (price.Order.Equals("base"))
                 {
-                    res.Base = price.Amount;
-                    res.DetailBase = price.Details;
+                    userPrices.Base = price.Amount;
+                    userPrices.DetailBase = price.Details;
                 }
                 if (price.Order.Equals("normal"))
                 {
-                    res.Normal = price.Amount;
-                    res.DetailNormal = price.Details;
+                    userPrices.Normal = price.Amount;
+                    userPrices.DetailNormal = price.Details;
                 }
                 if (price.Order.Equals("premium"))
                 {
-                    res.Premium = price.Amount;
-                    res.DetailPremium = price.Details;
+                    userPrices.Premium = price.Amount;
+                    userPrices.DetailPremium = price.Details;
                 }
             }
-            return res;
+            return userPrices;
         }
     }
 
+    //it will update a price. In case that you don't have what to update, it will create a new instance and add it
     public PriceModel UpdatePrice(PriceModel updatePrice)
     {
-        using (var uw = new UnitOfWork())
+        using (var unitOfWork = new UnitOfWork())
         {
-            var repo = uw.GetRepository<Price>();
-            var found =  repo.GetAll().Where(x => x.Order == updatePrice.Order && x.UserId == updatePrice.UserId).FirstOrDefault();
-            if (found != null)
+            var priceRepository = unitOfWork.GetRepository<Price>();
+            var foundPrice =  priceRepository.GetAll().Where(x => x.Order == updatePrice.Order && x.UserId == updatePrice.UserId).FirstOrDefault();
+            if (foundPrice != null)
             {
-                found.Amount = updatePrice.Amount;
-                found.Order = updatePrice.Order;
-                found.Details = updatePrice.Details;
-                found.UserId = updatePrice.UserId;
-                repo.Update(found);
+                foundPrice.Amount = updatePrice.Amount;
+                foundPrice.Order = updatePrice.Order;
+                foundPrice.Details = updatePrice.Details;
+                foundPrice.UserId = updatePrice.UserId;
+                priceRepository.Update(foundPrice);
             }
             else
             {
                 var price = new Price { Amount = updatePrice.Amount, Details = updatePrice.Details, Order = updatePrice.Order, UserId = updatePrice.UserId};
-                repo.Add(price);
+                priceRepository.Add(price);
             }
-            uw.Save();
+            unitOfWork.Save();
             return updatePrice;
         }
     }

@@ -11,26 +11,28 @@ namespace WebAPI.Service
 {
     public class RoleService
     {
-        public RoleModel Add(RoleModel newRole)
+        //add a new role to an user
+        public RoleModel AddNewRole(RoleModel newRole)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<Role>();
-                repo.Add(RoleMapper.MapRoleDataModel(newRole));
-                uw.Save();
+                var repository = unitOfWork.GetRepository<Role>();
+                repository.Add(RoleMapper.MapRoleDataModel(newRole));
+                unitOfWork.Save();
             }
             return newRole;
         }
 
-        public RoleModel Get(int idUser)
+        //based on an userId it will return his role(basic, advicer or admin)
+        public RoleModel GetRole(int idUser)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<Role>();
-                var found = repo.GetAll().ToList().Where(x => x.Id.Equals(idUser)).FirstOrDefault();
-                if (found == null)
+                var repository = unitOfWork.GetRepository<Role>();
+                var foundRole = repository.GetAll().ToList().Where(x => x.Id.Equals(idUser)).FirstOrDefault();
+                if (foundRole == null)
                     return null;
-                return RoleMapper.MapRole(found);
+                return RoleMapper.MapRole(foundRole);
             }
         }
     }

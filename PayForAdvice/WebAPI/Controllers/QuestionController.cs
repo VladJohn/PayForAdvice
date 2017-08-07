@@ -67,7 +67,7 @@ namespace WebAPI.Controllers
                 return BadRequest();
             var service = new QuestionService();
             var serviceAnswers = new AnswerService();
-            var addQuestion = service.Add(question);
+            var addQuestion = service.AddQuestion(question);
             serviceAnswers.AddEmptyAnswer(addQuestion.Id, idResponder);
             if (addQuestion == null)
             {
@@ -105,12 +105,12 @@ namespace WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new QuestionService();
-            var updatedQ = service.MarkQuestionAsRefunded(idQuestion);
-            if (updatedQ == null)
+            var updatedQuestion = service.MarkQuestionAsRefunded(idQuestion);
+            if (updatedQuestion == null)
             {
                 return BadRequest();
             }
-            return Ok(updatedQ);
+            return Ok(updatedQuestion);
         }
 
 
