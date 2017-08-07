@@ -14,14 +14,14 @@ namespace WebAPI.Services
     {
         public UserModelForSignUp AddUser(UserModelForSignUp user)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<User>();
-                var userToAdd = UserMapper.MapUserFromSignUp(user);
-                userToAdd.Status = "active";
-                userToAdd.RoleId = 3;
-                repo.Add(userToAdd);
-                uw.Save();
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userToBeAdded = UserMapper.MapUserFromSignUp(user);
+                userToBeAdded.Status = "active";
+                userToBeAdded.RoleId = 3;
+                userRepository.Add(userToBeAdded);
+                unitOfWork.Save();
                 return user;
             }
         }
@@ -29,108 +29,109 @@ namespace WebAPI.Services
 
         public TokenModel LogIn(string username, string password)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<User>();
-                var users = repo.GetAll();
-                var repol = uw.GetRepository<Token>();
-                User found = users.ToList().Where(x => x.Username.Equals(username) && x.Password.Equals(password)).FirstOrDefault();
-                if (found != null)
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userList = userRepository.GetAll();
+                var tokenRepository = unitOfWork.GetRepository<Token>();
+                User userFound = userList.ToList().Where(x => x.Username.Equals(username) && x.Password.Equals(password)).FirstOrDefault();
+                if (userFound != null)
                 {
-                    var token = new Token { Ip = GetClientIp(), Expiration = DateTime.Now.AddMinutes(30), UserId = found.Id, TokenText = Guid.NewGuid().ToString()};
-                    repol.Add(token);
-                    var tokenToReturn = new TokenModel { Ip = token.Ip, Expiration = token.Expiration, UserId = token.UserId, TokenText = token.TokenText };
-                    uw.Save();
-                    return tokenToReturn;
+                    var tokenToBeAdded = new Token { Ip = GetClientIp(), Expiration = DateTime.Now.AddMinutes(30), UserId = userFound.Id, TokenText = Guid.NewGuid().ToString()};
+                    tokenRepository.Add(tokenToBeAdded);
+                    var tokenToBeReturned = new TokenModel { Ip = tokenToBeAdded.Ip, Expiration = tokenToBeAdded.Expiration, UserId = tokenToBeAdded.UserId, TokenText = tokenToBeAdded.TokenText };
+                    unitOfWork.Save();
+                    return tokenToBeReturned;
                 }
                 return null;
             }
         }
 
-        public UserModelForProfile GetUser(int idUser)
+        public UserModelForProfile GetUser(int userId)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<User>();
-                var user = UserMapper.MapUserForProfile(repo.Find(idUser));
-                user.Rating = GetRatingForUser(idUser);
-                return user;
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userToBeReturned = UserMapper.MapUserForProfile(userRepository.Find(userId));
+                userToBeReturned.Rating = GetRatingForUser(userId);
+                return userToBeReturned;
             }
         }
 
-        public List<UserModelForCategoryView> GetAdvicersByCategory(int idCategory)
+        public List<UserModelForCategoryView> GetAdvicersByCategory(int categoryId)
         {
-            var advicers = new List<UserModelForCategoryView>();
+            var advicerList = new List<UserModelForCategoryView>();
             using (var uw = new UnitOfWork())
             {
-                var repo = uw.GetRepository<User>();
-                var users = repo.GetAll().Where(x => x.Role.Name == "adviser" && x.Status == "active" && x.Categories.Any(c => c.Id == idCategory)).ToList();
-                foreach ( var user in users)
+                var userRepository = uw.GetRepository<User>();
+                var userList = userRepository.GetAll().Where(x => x.Role.Name == "adviser" && x.Status == "active" && x.Categories.Any(c => c.Id == categoryId)).ToList();
+                foreach ( var user in userList)
                 {
                     var advicer = UserMapper.MapUserForCategoryView(user);
                     advicer.Rating = GetRatingForUser(advicer.Id);
-                    advicers.Add(advicer); 
+                    advicerList.Add(advicer); 
                 }
-                return advicers;
+                return advicerList;
                 
             }
         }
 
         public UserModelForProfile UpdateUserProfile(UserModelForProfile user)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<User>();
-                var userToUpdate = repo.Find(user.Id);
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userToUpdate = userRepository.Find(user.Id);
                 userToUpdate.Password = user.Password;
                 userToUpdate.Website = user.Website;
                 userToUpdate.Bio = user.Bio;
                 userToUpdate.AvatarUrl = user.AvatarUrl;
                 userToUpdate.Email = user.Email;
                 userToUpdate.Name = user.Name;
-                repo.Update(userToUpdate);
-                uw.Save();
+                userRepository.Update(userToUpdate);
+                unitOfWork.Save();
                 return user;
             }
         }
 
-        public double GetRatingForUser(int idUser)
+        public double GetRatingForUser(int userId)
         {
-            int counter = 0;
-            double rating = 0;
-            using (var uw = new UnitOfWork())
+            int counterForRatingsHigherThatZero = 0;
+            double ratingSum = 0;
+            double ratingAverage = 0;
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<User>();
-                var user = repo.Find(idUser);
-                if (user.RoleId == 2)
+                var userRepository = unitOfWork.GetRepository<User>();
+                var foundUser = userRepository.Find(userId);
+                if (foundUser.RoleId == 2)
                 {
-                    foreach (var a in user.Answers)
+                    foreach (var answer in foundUser.Answers)
                     {
-                        rating += a.Rating;
-                        if (a.Rating != 0)
-                            counter++;
+                        ratingSum += answer.Rating;
+                        if (answer.Rating != 0)
+                            counterForRatingsHigherThatZero++;
                     }
                 }
-                if (counter == 0)
+                if (counterForRatingsHigherThatZero == 0)
                     return 0;
-                rating = rating / counter;
+                ratingAverage = ratingSum / counterForRatingsHigherThatZero;
             }
-            rating = Math.Round(rating, 2);
-            return rating;
+            ratingAverage = Math.Round(ratingAverage, 2);
+            return ratingAverage;
         }
 
 
 
-        public UserModel DeleteUser(int idUser)
+        public UserModel DeleteUser(int userId)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<User>();
-                var user = repo.Find(idUser);
-                user.Status = "deleted";
-                repo.Update(user);
-                uw.Save();
-                return UserMapper.MapUser(user);
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userList = userRepository.Find(userId);
+                userList.Status = "deleted";
+                userRepository.Update(userList);
+                unitOfWork.Save();
+                return UserMapper.MapUser(userList);
             }
         }
 
@@ -139,7 +140,6 @@ namespace WebAPI.Services
             var ip = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : "";
             var context = new HttpContextWrapper(HttpContext.Current);
             var request = (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"];
-
             return ip;
         }
     }

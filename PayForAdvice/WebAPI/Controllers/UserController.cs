@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
-using System.Web.Mvc.Html;
 using WebAPI.FacebookIntegration.Models;
 using WebAPI.FacebookIntegration.Service;
 using WebAPI.Models;
@@ -13,38 +9,37 @@ using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
-    //test comment
     public class UserController : ApiController
     {
-        public IHttpActionResult GetUsersByCategory(int idCategory)
+        public IHttpActionResult GetUsersByCategory(int categoryId)
         {
-            //  var token = HttpContext.Current.Request.Headers["TokenText"];
-            // var service2 = new TokenService();
-            //  var authorizedToken = service2.IsAuthorized(token);
-            //   if (authorizedToken != null)
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var tokenService = new TokenService();
+            var authorizedToken = tokenService.IsAuthorizedBase(token);
+            if (authorizedToken != null)
             {
-                var service = new UserService();
-                var users = service.GetAdvicersByCategory(idCategory);
-                if (users == null)
+                var userService = new UserService();
+                var userList = userService.GetAdvicersByCategory(categoryId);
+                if (userList == null)
                 {
-                    //        service2.Update(authorizedToken.Id);
+                    tokenService.Update(authorizedToken.Id);
                     return NotFound();
                 }
-                //   service2.Update(authorizedToken.Id);
-                return Ok(users);
+                tokenService.Update(authorizedToken.Id);
+                return Ok(userList);
             }
-            //  return BadRequest();
+            return BadRequest();
         }
 
         public IHttpActionResult GetLogIn(string username, string password)
         {
-            var service = new UserService();
-            var found = service.LogIn(username, password);
-            if (found == null)
+            var userService = new UserService();
+            var token = userService.LogIn(username, password);
+            if (token == null)
             {
                 return BadRequest();
             }
-            return Ok(found);
+            return Ok(token);
         }
 
         public IHttpActionResult PostUser(UserModelForSignUp user)
@@ -53,8 +48,8 @@ namespace WebAPI.Controllers
             {
                 return BadRequest();
             }
-            var service = new UserService();
-            var userAdded = service.AddUser(user);
+            var userService = new UserService();
+            var userAdded = userService.AddUser(user);
             if (userAdded == null)
             {
                 return NotFound();
@@ -62,27 +57,27 @@ namespace WebAPI.Controllers
             return Ok(userAdded);
         }
 
-        public IHttpActionResult PutUserDeleteStatus(int idUser)
+        public IHttpActionResult PutDeleteStatusOnUser(int userId)
         {
             var token = HttpContext.Current.Request.Headers["TokenText"];
-            var service2 = new TokenService();
-            var authorizedToken = service2.IsAuthorized(token);
+            var tokenService = new TokenService();
+            var authorizedToken = tokenService.IsAuthorizedBase(token);
             if (authorizedToken != null)
             {
                 if (!ModelState.IsValid)
                 {
-                    service2.Update(authorizedToken.Id);
+                    tokenService.Update(authorizedToken.Id);
                     return BadRequest();
                 }
-                var service = new UserService();
-                var user = service.DeleteUser(idUser);
-                if (user == null)
+                var userService = new UserService();
+                var deletedUser = userService.DeleteUser(userId);
+                if (deletedUser == null)
                 {
-                    service2.Update(authorizedToken.Id);
+                    tokenService.Update(authorizedToken.Id);
                     return NotFound();
                 }
-                service2.Update(authorizedToken.Id);
-                return Ok(user);
+                tokenService.Update(authorizedToken.Id);
+                return Ok(deletedUser);
             }
             return BadRequest();
         }
@@ -90,98 +85,100 @@ namespace WebAPI.Controllers
         public IHttpActionResult PutUserProfile([FromBody] UserModelForProfile user)
         {
             var token = HttpContext.Current.Request.Headers["TokenText"];
-            var service2 = new TokenService();
-            var authorizedToken = service2.IsAuthorized(token);
+            var tokenService = new TokenService();
+            var authorizedToken = tokenService.IsAuthorizedBase(token);
             if (authorizedToken != null)
             {
                 if (!ModelState.IsValid)
                 {
-                    service2.Update(authorizedToken.Id);
+                    tokenService.Update(authorizedToken.Id);
                     return BadRequest();
                 }
-                var service = new UserService();
-                var updated = service.UpdateUserProfile(user);
-                if (updated == null)
+                var userService = new UserService();
+                var updatedUserProfile = userService.UpdateUserProfile(user);
+                if (updatedUserProfile == null)
                 {
-                    service2.Update(authorizedToken.Id);
+                    tokenService.Update(authorizedToken.Id);
                     return NotFound();
                 }
-                service2.Update(authorizedToken.Id);
-                return Ok(updated);
+                tokenService.Update(authorizedToken.Id);
+                return Ok(updatedUserProfile);
             }
             return BadRequest();
         }
 
-        public IHttpActionResult GetUser(int id)
+        public IHttpActionResult GetUser(int userId)
         {
-            /*  var token = HttpContext.Current.Request.Headers["TokenText"];
-              var service2 = new TokenService();
-              var authorizedToken = service2.IsAuthorized(token);
-              if (authorizedToken != null)
-              {*/
-            if (!ModelState.IsValid)
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var tokenService = new TokenService();
+            var authorizedToken = tokenService.IsAuthorizedBase(token);
+            if (authorizedToken != null)
             {
-                // service2.Update(authorizedToken.Id);
-                return BadRequest();
+                if (!ModelState.IsValid)
+                {
+                    tokenService.Update(authorizedToken.Id);
+                    return BadRequest();
+                }
+                var userService = new UserService();
+                var userFound = userService.GetUser(userId);
+                if (userFound == null)
+                {
+                    tokenService.Update(authorizedToken.Id);
+                    return NotFound();
+                }
+                tokenService.Update(authorizedToken.Id);
+                return Ok(userFound);
             }
-            var service = new UserService();
-            var user = service.GetUser(id);
-            if (user == null)
-            {
-                // service2.Update(authorizedToken.Id);
-                return NotFound();
-            }
-            // service2.Update(authorizedToken.Id);
-            return Ok(user);
-            // }
-            //  return BadRequest();
+            return BadRequest();
         }
 
 
         [System.Web.Http.HttpGet]
-        public async Task<UserFacebookModel> get()
+        public async Task<UserFacebookModel> Get()
         {
-            FacebookService fs = new FacebookService();
-            return await fs.GetFbUserDetails();
+            FacebookService facebookService = new FacebookService();
+            return await facebookService.GetFbUserDetails();
         }
 
-        public IHttpActionResult GetUserData(string something)
+        public IHttpActionResult GetUserData(string userData)
         {
             var token = HttpContext.Current.Request.Headers["TokenText"];
-            var service2 = new TokenService();
-            var authorizedToken = service2.IsAuthorized(token);
+            var tokenService = new TokenService();
+            var authorizedToken = tokenService.IsAuthorizedBase(token);
             if (authorizedToken != null)
             {
                 if (!ModelState.IsValid)
                 {
-                    service2.Update(authorizedToken.Id);
+                    tokenService.Update(authorizedToken.Id);
                     return BadRequest();
                 }
-                var userdata = service2.getInfoByToken(token);
-                if (userdata == null)
+                var userReturnedData = tokenService.getUserInfoByToken(token);
+                if (userReturnedData == null)
                 {
-                    service2.Update(authorizedToken.Id);
+                    tokenService.Update(authorizedToken.Id);
                     return NotFound();
                 }
-                service2.Update(authorizedToken.Id);
-                return Ok(userdata);
+                tokenService.Update(authorizedToken.Id);
+                return Ok(userReturnedData);
             }
             return BadRequest();
         }
 
-
-        public ActionResult SignInCallBack(string code)
+        [System.Web.Http.Route("api/user/{code}")]
+        [System.Web.Http.AllowAnonymous]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult SignInCallBack(string code)
         {
             //var callbackUrl = Url.Action("ConfirmEmail", "user", new { code = code }, Request.RequestUri.Scheme);
-            return new RedirectResult(code);
+            return Ok(code);
         }
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult Login(string returnUrl)
+        public ActionResult LoginWithFacebook(string returnUrl)
         {
             var appId = "128919027720116";
-            var redirectUri = "http://localhost:8080/User/SignInCallBack";
-            var uri = $"https://www.facebook.com/v2.10/dialog/oauth?client_id={appId}&redirect_uri={redirectUri}&response_type=token";
+            var redirectUri = "http://localhost:8080/user/";
+            var uri = $"https://www.facebook.com/v2.10/dialog/oauth?client_id={appId}&redirect_uri={redirectUri}";
             return new RedirectResult(uri);
         }
     }
