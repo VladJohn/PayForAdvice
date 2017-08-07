@@ -9,10 +9,10 @@ namespace WebAPI.Controllers
 {
     public class RoleController : ApiController
     {
-        public IHttpActionResult Get(int IdRole)
+        public IHttpActionResult GetRoles(int IdRole)
         {
             var service = new RoleService();
-            var roles = service.Get(IdRole);
+            var roles = service.GetRole(IdRole);
             if (roles == null)
                 return NotFound();
             return Ok(roles);

@@ -11,33 +11,35 @@ namespace WebAPI.Services
 {
     public class QuestionService
     {
-        public QuestionModel Add (QuestionModel question)
+        //add a question to the list of questions
+        public QuestionModel AddQuestion (QuestionModel question)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var questionRepo = uw.GetRepository<Question>();
+                var questionRepository = unitOfWork.GetRepository<Question>();
                 var questionToAdd = QuestionMapper.MapQuestionDataModel(question);
                 questionToAdd.Date = DateTime.Now;
                 questionToAdd.Status = "pending";
-                questionRepo.Add(questionToAdd);
-                uw.Save();
+                questionRepository.Add(questionToAdd);
+                unitOfWork.Save();
                 return QuestionMapper.MapQuestion(questionToAdd);
             }
         }
 
+        //it will return a list with all the questions that have a certain statusId
         public List<QuestionModel> GetQuestionsByStatus(int idStatus)
         {
             var result = new List<QuestionModel>();
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var questionRepo = uw.GetRepository<Question>();
-                var questionList = questionRepo.GetAll();
+                var questionRepository = unitOfWork.GetRepository<Question>();
+                var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
                     if (question.UserId == idStatus)
                     {
-                        var q = QuestionMapper.MapQuestion(question);
-                        result.Add(q);
+                        var questionToAdd= QuestionMapper.MapQuestion(question);
+                        result.Add(questionToAdd);
                     }
                 }
                 result = result.OrderBy(x => x.Status).ToList();
@@ -45,19 +47,20 @@ namespace WebAPI.Services
             return result;
         }
 
+        //it will return a list with all the questions ordered descending by date(newer to older)
         public List<QuestionModel> GetQuestionsByDate(int idDate)
         {
             var result = new List<QuestionModel>();
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var questionRepo = uw.GetRepository<Question>();
-                var questionList = questionRepo.GetAll();
+                var questionRepository = unitOfWork.GetRepository<Question>();
+                var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
                     if (question.UserId == idDate)
                     {
-                        var q = QuestionMapper.MapQuestion(question);
-                        result.Add(q);
+                        var questionToAdd= QuestionMapper.MapQuestion(question);
+                        result.Add(questionToAdd);
                     }
                 }
                 result = result.OrderByDescending(x => x.Date).ToList();
@@ -65,61 +68,64 @@ namespace WebAPI.Services
             return result;
         }
 
+        //it returns a list of Questions for a certain userId
         public List<QuestionModel> GetAllQuestionsByUserId (int idUser)
         {
             var result = new List<QuestionModel>();
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var questionRepo = uw.GetRepository<Question>();
-                var questionList = questionRepo.GetAll();
+                var questionRepository = unitOfWork.GetRepository<Question>();
+                var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
                     if (question.UserId == idUser)
                     {
-                        var q = QuestionMapper.MapQuestion(question);
-                        result.Add(q);
+                        var questionToAdd= QuestionMapper.MapQuestion(question);
+                        result.Add(questionToAdd);
                     }
                 }
             }
             return result;
         }
 
+        //returns the question with the id = idQuestion
         public QuestionModel GetQuestionById(int idQuestion)
         {
             var result = new QuestionModel();
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var questionRepo = uw.GetRepository<Question>();
-                var questionList = questionRepo.GetAll();
+                var questionRepository = unitOfWork.GetRepository<Question>();
+                var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
                     if (question.Id == idQuestion)
                     {
-                        var q = QuestionMapper.MapQuestion(question);
-                        return q;
+                        var questionToAdd= QuestionMapper.MapQuestion(question);
+                        return questionToAdd;
                     }
                 }
             }
             return null;
         }
 
+        //returns a list with all the answered questions for an advicer
         public List<QuestionModel> getAdvicerAnsweredQuestions(int idAdvicer)
         {
             var result = new List<QuestionModel>();
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var questionRepo = uw.GetRepository<Question>();
+                var answerRepo = unitOfWork.GetRepository<Answer>();
+                var questionRepository = unitOfWork.GetRepository<Question>();
                 var answerList = answerRepo.GetAll();
                 foreach (var answer in answerList)
                 {
                     if (answer.UserId == idAdvicer)
                     {
-                        var found = questionRepo.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status=="solved").ToList();
+                        var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status=="solved").ToList();
                         foreach (var question in found)
                         {
-                            var a = QuestionMapper.MapQuestion(question);
-                            result.Add(a);
+                            var questionToAdd = QuestionMapper.MapQuestion(question);
+                            result.Add(questionToAdd);
                         }
                     }
                 }
@@ -127,23 +133,24 @@ namespace WebAPI.Services
             return result;
         }
 
+        //returns a list with all the pending questions for an advicer
         public List<QuestionModel> getAdvicerPendingQuestions(int idAdvicer)
         {
             var result = new List<QuestionModel>();
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var questionRepo = uw.GetRepository<Question>();
+                var answerRepo = unitOfWork.GetRepository<Answer>();
+                var questionRepository = unitOfWork.GetRepository<Question>();
                 var answerList = answerRepo.GetAll();
                 foreach (var answer in answerList)
                 {
                     if (answer.UserId == idAdvicer)
                     {
-                        var found = questionRepo.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == "pending").ToList();
+                        var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == "pending").ToList();
                         foreach (var question in found)
                         {
-                            var a = QuestionMapper.MapQuestion(question);
-                            result.Add(a);
+                            var questionToAdd = QuestionMapper.MapQuestion(question);
+                            result.Add(questionToAdd);
                         }
                     }
                 }
@@ -151,15 +158,16 @@ namespace WebAPI.Services
             return result;
         }
 
+        //it will change the status of an question as refunded
         public QuestionModel MarkQuestionAsRefunded(int idQuestion)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var questionRepo = uw.GetRepository<Question>();
-                var question = questionRepo.Find(idQuestion);
+                var questionRepository = unitOfWork.GetRepository<Question>();
+                var question = questionRepository.Find(idQuestion);
                 question.Status = "refunded";
-                questionRepo.Update(question);
-                uw.Save();
+                questionRepository.Update(question);
+                unitOfWork.Save();
                 return QuestionMapper.MapQuestion(question);
             }
             
