@@ -73,8 +73,6 @@ namespace WebAPI.Services
                 {
                     if (question.Id == idQuestion)
                     {
-                        if (question.Status.Equals("solved"))
-                        {
                             foreach (var answer in answerList)
                             {
                                 if (answer.QuestionId == idQuestion)
@@ -83,7 +81,7 @@ namespace WebAPI.Services
                                     return a;
                                 }
                             }
-                        }
+                        
                     }
                 }
             }
