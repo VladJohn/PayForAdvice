@@ -1,9 +1,5 @@
 ﻿using Domain;
 using Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using WebAPI.Mappings;
 using WebAPI.Models;
 
@@ -13,11 +9,11 @@ namespace WebAPI.Services
     {
         public UploadModel Register(UploadModel upload)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<Upload>();
-                repo.Add(UploadMapper.MapUploadDataModel(upload));
-                uw.Save();
+                var uploadRepository = unitOfWork.GetRepository<Upload>();
+                uploadRepository.Add(UploadMapper.MapUploadDataModel(upload));
+                unitOfWork.Save();
                 return upload;
             }
         }
