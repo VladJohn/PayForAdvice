@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using System.Collections.Specialized;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -6,11 +10,16 @@ using WebAPI.FacebookIntegration.Models;
 using WebAPI.FacebookIntegration.Service;
 using WebAPI.Models;
 using WebAPI.Services;
+using System;
 
 namespace WebAPI.Controllers
 {
     public class UserController : ApiController
     {
+        private const string appId = "128919027720116";
+        private const string redirectUri = "http://localhost:52619/api/user/";
+        private const string appSecret = "cc0e61fc3c34b4ebbc2bf573290aeb9c";
+
         public IHttpActionResult GetUsersByCategory(int categoryId)
         {
             var token = HttpContext.Current.Request.Headers["TokenText"];
@@ -132,14 +141,6 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
 
-
-        [System.Web.Http.HttpGet]
-        public async Task<UserFacebookModel> Get()
-        {
-            FacebookService facebookService = new FacebookService();
-            return await facebookService.GetFbUserDetails();
-        }
-
         public IHttpActionResult GetUserData(string userData)
         {
             var token = HttpContext.Current.Request.Headers["TokenText"];
@@ -164,37 +165,68 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
 
-        /*//[System.Web.Http.Route("api/user")]
-        [System.Web.Http.AllowAnonymous]
-        [System.Web.Http.HttpGet]
-        public IHttpActionResult SignInCallBack(string code)
-        {
-            //var callbackUrl = Url.Action("ConfirmEmail", "user", new { code = code }, Request.RequestUri.Scheme);
-            //return Ok(code);
-        }*/
-
-        [System.Web.Http.AllowAnonymous]
-        [System.Web.Http.HttpGet]
-        public IHttpActionResult SignInCallBack()
-        {
-            //var callbackUrl = Url.Action("ConfirmEmail", "user", new { code = code }, Request.RequestUri.Scheme);
-            return Ok();
-        }
-
-        [System.Web.Http.Route("test/{code}")]
-        [System.Web.Http.AllowAnonymous]
-        public string Test(string code)
-        {
-            return "solved";
-        }
-
         [System.Web.Mvc.HttpPost]
         public ActionResult LoginWithFacebook(string returnUrl)
         {
-            var appId = "128919027720116";
-            var redirectUri = "http://localhost:52619/api/facebook2/";
-            var uri = $"https://www.facebook.com/v2.10/dialog/oauth?client_id={appId}&redirect_uri={redirectUri}";
+            var uri = $"https://www.facebook.com/v2.10/dialog/oauth?client_id={appId}&redirect_uri={redirectUri}&display=popup";
             return new RedirectResult(uri);
         }
+
+        [System.Web.Http.AllowAnonymous]
+        [System.Web.Http.HttpGet]
+        public async Task<IHttpActionResult> SignInCallBackAsync(string code)
+        {
+            //getting the access_token from the code
+            var uri = $"https://graph.facebook.com/v2.10/oauth/access_token?client_id={appId}&redirect_uri={redirectUri}&client_secret={appSecret}&code={code}";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream resStream = response.GetResponseStream();
+            FbTokenModel res = JsonConvert.DeserializeObject<FbTokenModel>(StreamReader(resStream));
+
+            //getting user data by access_token
+            UserFacebookModel a = await Get(res.access_token);
+
+            //check if user has logged in with fb before. If he did, log him in, else create him an account and log him in
+            var service = new UserService();
+            var service2 = new TokenService();
+            if(!service.FindUserByEmail(a))
+            {
+                service.AddUserFromFacebook(a.Name, a.Email, a.picture.data.url);
+            }
+            var token = service.LogInWithFacebook(res.access_token, a.Email);
+            if (token == null)
+            {
+                return BadRequest();
+            }
+            return Ok(token);
+        }
+
+        [System.Web.Http.HttpGet]
+        public async Task<UserFacebookModel> Get(string AT)
+        {
+            FacebookService facebookService = new FacebookService(AT);
+            return await facebookService.GetFbUserDetails();
+        }
+
+        private string StreamReader(Stream resStream)
+        {
+            string token = "";
+            using (var stream = new MemoryStream())
+            {
+                byte[] buffer = new byte[2048];
+                int bytesRead;
+                while ((bytesRead = resStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    stream.Write(buffer, 0, bytesRead);
+                }
+                byte[] result = stream.ToArray();
+                foreach (byte x in result)
+                {
+                    token = token + ((char)x).ToString();
+                }
+            }
+            return token;
+        }
+
     }
 }

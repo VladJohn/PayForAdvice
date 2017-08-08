@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
+using WebAPI.FacebookIntegration.Models;
 using WebAPI.Mappings;
 using WebAPI.Models;
 
@@ -27,6 +28,22 @@ namespace WebAPI.Services
             }
         }
 
+        public UserModel AddUserFromFacebook(string name, string email, string pictureUrl)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userToBeAdded = new User();
+                userToBeAdded.Name = name;
+                userToBeAdded.Email = email;
+                userToBeAdded.AvatarUrl = pictureUrl;
+                userToBeAdded.Status = (int)UserStatusEnum.Active;
+                userToBeAdded.RoleId = 3;
+                userRepository.Add(userToBeAdded);
+                unitOfWork.Save();
+                return UserMapper.MapUser(userToBeAdded);
+            }
+        }
 
         public TokenModel LogIn(string username, string password)
         {
@@ -39,6 +56,26 @@ namespace WebAPI.Services
                 if (userFound != null)
                 {
                     var tokenToBeAdded = new Token { Ip = GetClientIp(), Expiration = DateTime.Now.AddMinutes(30), UserId = userFound.Id, TokenText = Guid.NewGuid().ToString()};
+                    tokenRepository.Add(tokenToBeAdded);
+                    var tokenToBeReturned = new TokenModel { Ip = tokenToBeAdded.Ip, Expiration = tokenToBeAdded.Expiration, UserId = tokenToBeAdded.UserId, TokenText = tokenToBeAdded.TokenText };
+                    unitOfWork.Save();
+                    return tokenToBeReturned;
+                }
+                return null;
+            }
+        }
+
+        public TokenModel LogInWithFacebook(string facebookToken, string email)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userList = userRepository.GetAll();
+                var tokenRepository = unitOfWork.GetRepository<Token>();
+                User userFound = userList.ToList().Where(x => x.Email.Equals(email)).FirstOrDefault();
+                if (userFound != null)
+                {
+                    var tokenToBeAdded = new Token { Ip = GetClientIp(), Expiration = DateTime.Now.AddMinutes(30), UserId = userFound.Id, TokenText = facebookToken };
                     tokenRepository.Add(tokenToBeAdded);
                     var tokenToBeReturned = new TokenModel { Ip = tokenToBeAdded.Ip, Expiration = tokenToBeAdded.Expiration, UserId = tokenToBeAdded.UserId, TokenText = tokenToBeAdded.TokenText };
                     unitOfWork.Save();
@@ -142,6 +179,23 @@ namespace WebAPI.Services
             var context = new HttpContextWrapper(HttpContext.Current);
             var request = (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"];
             return ip;
+        }
+
+        public bool FindUserByEmail(UserFacebookModel user)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userList = userRepository.GetAll();
+                foreach(var userInList in userList)
+                {
+                    if(user.Email.Equals(userInList.Email))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }
