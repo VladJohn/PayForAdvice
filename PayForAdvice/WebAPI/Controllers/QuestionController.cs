@@ -3,6 +3,7 @@ using System.Web.Http;
 using WebAPI.Models;
 using WebAPI.Services;
 using Domain.Enums;
+using WebAPI.ValidatorsModel;
 
 namespace WebAPI.Controllers
 {
@@ -55,11 +56,17 @@ namespace WebAPI.Controllers
         //POST- add a new question to the question list
         public IHttpActionResult Add(QuestionModel question, int idResponder)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("Please enter a question!");
             var service = new QuestionService();
             var serviceAnswers = new AnswerService();
-            var addQuestion = service.AddQuestion(question);
+            QuestionModel addQuestion = null;
+            try
+            {
+                addQuestion = service.AddQuestion(question);
+            }
+            catch(ModelException exception)
+            {
+                return BadRequest(exception.Message);
+            }
             serviceAnswers.AddEmptyAnswer(addQuestion.Id, idResponder);
             return Ok(addQuestion);
         }

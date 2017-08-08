@@ -9,13 +9,21 @@ using System.Web;
 using WebAPI.FacebookIntegration.Models;
 using WebAPI.Mappings;
 using WebAPI.Models;
+using WebAPI.ValidatorsModel;
 
 namespace WebAPI.Services
 {
     public class UserService
     {
+        private UserValidator validator = new UserValidator();
+
         public UserModelForSignUp AddUser(UserModelForSignUp user)
         {
+            var errors = validator.Check(user);
+            if (errors.Count != 0)
+            {
+                throw new ModelException(string.Join(Environment.NewLine, errors));
+            }
             using (var unitOfWork = new UnitOfWork())
             {
                 var userRepository = unitOfWork.GetRepository<User>();

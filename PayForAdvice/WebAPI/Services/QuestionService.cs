@@ -6,14 +6,22 @@ using System.Linq;
 using Domain.Enums;
 using WebAPI.Mappings;
 using WebAPI.Models;
+using WebAPI.ValidatorsModel;
 
 namespace WebAPI.Services
 {
     public class QuestionService
     {
+        private QuestionValidator validator = new QuestionValidator();
+
         //add a question to the list of questions
         public QuestionModel AddQuestion (QuestionModel question)
         {
+            var errors = validator.Check(question);
+            if (errors.Count!=0)
+            {
+                throw new ModelException(string.Join(Environment.NewLine, errors));
+            }
             using (var unitOfWork = new UnitOfWork())
             {
                 var questionRepository = unitOfWork.GetRepository<Question>();
