@@ -33,10 +33,10 @@ namespace WebAPI.Controllers
         }
 
         //getAllByUser
-        public IHttpActionResult GetAllPricesForUsers(int idUser)
+        public IHttpActionResult GetAllPricesForUsers(int userId)
         {
             var service = new PriceService();
-            var prices = service.GetAllPricesByUser(idUser);
+            var prices = service.GetAllPricesByUser(userId);
             if (prices == null)
                 return NotFound();
             return Ok(prices);

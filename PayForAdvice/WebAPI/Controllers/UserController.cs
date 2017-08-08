@@ -164,20 +164,35 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
 
-        [System.Web.Http.Route("api/user/{code}")]
+        /*//[System.Web.Http.Route("api/user")]
         [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]
         public IHttpActionResult SignInCallBack(string code)
         {
             //var callbackUrl = Url.Action("ConfirmEmail", "user", new { code = code }, Request.RequestUri.Scheme);
-            return Ok(code);
+            //return Ok(code);
+        }*/
+
+        [System.Web.Http.AllowAnonymous]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult SignInCallBack()
+        {
+            //var callbackUrl = Url.Action("ConfirmEmail", "user", new { code = code }, Request.RequestUri.Scheme);
+            return Ok();
+        }
+
+        [System.Web.Http.Route("test/{code}")]
+        [System.Web.Http.AllowAnonymous]
+        public string Test(string code)
+        {
+            return "solved";
         }
 
         [System.Web.Mvc.HttpPost]
         public ActionResult LoginWithFacebook(string returnUrl)
         {
             var appId = "128919027720116";
-            var redirectUri = "http://localhost:8080/user/";
+            var redirectUri = "http://localhost:52619/api/facebook2/";
             var uri = $"https://www.facebook.com/v2.10/dialog/oauth?client_id={appId}&redirect_uri={redirectUri}";
             return new RedirectResult(uri);
         }
