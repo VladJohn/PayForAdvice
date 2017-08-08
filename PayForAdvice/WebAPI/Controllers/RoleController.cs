@@ -1,14 +1,15 @@
 ﻿using System.Web.Http;
-using WebAPI.Service;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
     public class RoleController : ApiController
     {
-        public IHttpActionResult GetRoles(int IdRole)
+        //get the role with the id = idRole for a user
+        public IHttpActionResult GetRoles(int idRole)
         {
             var service = new RoleService();
-            var roles = service.GetRole(IdRole);
+            var roles = service.GetRole(idRole);
             if (roles == null)
                 return NotFound();
             return Ok(roles);

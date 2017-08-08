@@ -54,6 +54,7 @@
     <Compile Include="Comment.cs" />
     <Compile Include="Enums\AnswerStatusEnum.cs" />
     <Compile Include="Enums\PriceOrderEnum.cs" />
+    <Compile Include="Enums\QuestionSorterEnum.cs" />
     <Compile Include="Enums\UserStatusEnum.cs" />
     <Compile Include="Idable.cs" />
     <Compile Include="Price.cs" />

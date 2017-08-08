@@ -3,7 +3,7 @@ using Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using Domain.Enums;
 using WebAPI.Mappings;
 using WebAPI.Models;
 
@@ -36,11 +36,9 @@ namespace WebAPI.Services
                 var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
-                    if (question.UserId == idStatus)
-                    {
-                        var questionToAdd= QuestionMapper.MapQuestion(question);
-                        result.Add(questionToAdd);
-                    }
+                    if (question.UserId != idStatus) continue;
+                    var questionToAdd = QuestionMapper.MapQuestion(question);
+                    result.Add(questionToAdd);
                 }
                 result = result.OrderBy(x => x.Status).ToList();
             }
@@ -57,11 +55,9 @@ namespace WebAPI.Services
                 var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
-                    if (question.UserId == idDate)
-                    {
-                        var questionToAdd= QuestionMapper.MapQuestion(question);
-                        result.Add(questionToAdd);
-                    }
+                    if (question.UserId != idDate) continue;
+                    var questionToAdd= QuestionMapper.MapQuestion(question);
+                    result.Add(questionToAdd);
                 }
                 result = result.OrderByDescending(x => x.Date).ToList();
             }
@@ -78,11 +74,9 @@ namespace WebAPI.Services
                 var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
-                    if (question.UserId == idUser)
-                    {
-                        var questionToAdd= QuestionMapper.MapQuestion(question);
-                        result.Add(questionToAdd);
-                    }
+                    if (question.UserId != idUser) continue;
+                    var questionToAdd= QuestionMapper.MapQuestion(question);
+                    result.Add(questionToAdd);
                 }
             }
             return result;
@@ -98,18 +92,16 @@ namespace WebAPI.Services
                 var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
-                    if (question.Id == idQuestion)
-                    {
-                        var questionToAdd= QuestionMapper.MapQuestion(question);
-                        return questionToAdd;
-                    }
+                    if (question.Id != idQuestion) continue;
+                    var questionToAdd= QuestionMapper.MapQuestion(question);
+                    return questionToAdd;
                 }
             }
             return null;
         }
 
         //returns a list with all the answered questions for an advicer
-        public List<QuestionModel> getAdvicerAnsweredQuestions(int idAdvicer)
+        public List<QuestionModel> GetAdvicerAnsweredQuestions(int idAdvicer)
         {
             var result = new List<QuestionModel>();
             using (var unitOfWork = new UnitOfWork())
@@ -119,22 +111,16 @@ namespace WebAPI.Services
                 var answerList = answerRepo.GetAll();
                 foreach (var answer in answerList)
                 {
-                    if (answer.UserId == idAdvicer)
-                    {
-                        var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == (int)QuestionStatusEnum.Solved).ToList();
-                        foreach (var question in found)
-                        {
-                            var questionToAdd = QuestionMapper.MapQuestion(question);
-                            result.Add(questionToAdd);
-                        }
-                    }
+                    if (answer.UserId != idAdvicer) continue;
+                    var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == (int)QuestionStatusEnum.Solved).ToList();
+                    result.AddRange(found.Select(QuestionMapper.MapQuestion));
                 }
             }
             return result;
         }
 
         //returns a list with all the pending questions for an advicer
-        public List<QuestionModel> getAdvicerPendingQuestions(int idAdvicer)
+        public List<QuestionModel> GetAdvicerPendingQuestions(int idAdvicer)
         {
             var result = new List<QuestionModel>();
             using (var unitOfWork = new UnitOfWork())
@@ -144,15 +130,9 @@ namespace WebAPI.Services
                 var answerList = answerRepo.GetAll();
                 foreach (var answer in answerList)
                 {
-                    if (answer.UserId == idAdvicer)
-                    {
-                        var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == (int)QuestionStatusEnum.Pending).ToList();
-                        foreach (var question in found)
-                        {
-                            var questionToAdd = QuestionMapper.MapQuestion(question);
-                            result.Add(questionToAdd);
-                        }
-                    }
+                    if (answer.UserId != idAdvicer) continue;
+                    var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == (int)QuestionStatusEnum.Pending).ToList();
+                    result.AddRange(found.Select(QuestionMapper.MapQuestion));
                 }
             }
             return result;

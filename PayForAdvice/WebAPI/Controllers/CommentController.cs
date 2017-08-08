@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
+﻿using System.Web.Http;
 using WebAPI.Models;
 using WebAPI.Services;
 
@@ -10,7 +6,7 @@ namespace WebAPI.Controllers
 {
     public class CommentController : ApiController
     {
-        //GET
+        //GET all comments for a question given by id = questionId
         public IHttpActionResult GetAllCommentsForQuestionId(int questionId)
         {
             var service = new CommentService();
@@ -22,7 +18,7 @@ namespace WebAPI.Controllers
             return Ok(comments);
         }
 
-        //POST
+        //POST - add a new comment to a question
         public IHttpActionResult Add(CommentModel comment)
         {
             if (!ModelState.IsValid)
