@@ -20,7 +20,6 @@ namespace WebAPI.Services
                 var userRepository = unitOfWork.GetRepository<User>();
                 var userToBeAdded = UserMapper.MapUserFromSignUp(user);
                 userToBeAdded.Status = (int)UserStatusEnum.Active;
-                userToBeAdded.RoleId = 3;
                 userRepository.Add(userToBeAdded);
                 unitOfWork.Save();
                 return user;

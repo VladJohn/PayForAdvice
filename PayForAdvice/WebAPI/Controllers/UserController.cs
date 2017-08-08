@@ -109,7 +109,7 @@ namespace WebAPI.Controllers
 
         public IHttpActionResult GetUser(int userId)
         {
-            var token = HttpContext.Current.Request.Headers["TokenText"];
+           /* var token = HttpContext.Current.Request.Headers["TokenText"];
             var tokenService = new TokenService();
             var authorizedToken = tokenService.IsAuthorizedBase(token);
             if (authorizedToken != null)
@@ -118,18 +118,18 @@ namespace WebAPI.Controllers
                 {
                     tokenService.Update(authorizedToken.Id);
                     return BadRequest();
-                }
+                }*/
                 var userService = new UserService();
                 var userFound = userService.GetUser(userId);
                 if (userFound == null)
                 {
-                    tokenService.Update(authorizedToken.Id);
+              //      tokenService.Update(authorizedToken.Id);
                     return NotFound();
                 }
-                tokenService.Update(authorizedToken.Id);
+              //  tokenService.Update(authorizedToken.Id);
                 return Ok(userFound);
-            }
-            return BadRequest();
+            //}
+           // return BadRequest();
         }
 
 

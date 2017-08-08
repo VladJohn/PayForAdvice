@@ -36,7 +36,7 @@ namespace WebAPI.Mappings
 
         public static User MapUserFromSignUp (UserModelForSignUp user)
         {
-            return new User { Id = user.Id, Username = user.Username, Password = user.Password, Email = user.Email, Name = user.Name, RoleId = 3};
+            return new User { Id = user.Id, Username = user.Username, Password = user.Password, Email = user.Email, Name = user.Name, RoleId = user.RoleId};
         }
 
         public static List<UserModel> MapUserList(List<User> users)

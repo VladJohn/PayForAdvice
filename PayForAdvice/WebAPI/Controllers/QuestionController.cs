@@ -64,7 +64,7 @@ namespace WebAPI.Controllers
         public IHttpActionResult Add(QuestionModel question, int idResponder)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest("Please enter a question!");
             var service = new QuestionService();
             var serviceAnswers = new AnswerService();
             var addQuestion = service.AddQuestion(question);
