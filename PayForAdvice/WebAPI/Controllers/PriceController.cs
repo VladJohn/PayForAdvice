@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
+﻿using System.Web.Http;
 using WebAPI.Models;
-using WebAPI.Service;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
     public class PriceController : ApiController
     {
-        //update
-        public IHttpActionResult Put(PriceModel price)
+        //update the price for a user
+        public IHttpActionResult PutPrice(PriceModel price)
         {
             var service = new PriceService();
             var updatePrice = service.UpdatePrice(price);
@@ -20,23 +16,24 @@ namespace WebAPI.Controllers
             return Ok(updatePrice);
         }
 
-        //add 
-        public IHttpActionResult Post(PriceModel price)
+        //add a new price for a user 
+        public IHttpActionResult PostPrice(PriceModel price)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var service = new PriceService();
-            var addPrice = service.Add(price);
+            var addPrice = service.AddNewPrice(price);
             if (addPrice == null)
                 return BadRequest();
             return Ok(addPrice);
         }
 
-        //getAllByUser
-        public IHttpActionResult GetAllPricesForUsers(int idUser)
+        //get all prices for a user with the id = userId
+        //if there are no prices it returns NotFound()
+        public IHttpActionResult GetAllPricesForUsers(int userId)
         {
             var service = new PriceService();
-            var prices = service.GetAllPricesByUser(idUser);
+            var prices = service.GetAllPricesByUser(userId);
             if (prices == null)
                 return NotFound();
             return Ok(prices);

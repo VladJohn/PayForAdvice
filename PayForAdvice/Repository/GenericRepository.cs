@@ -32,7 +32,6 @@ namespace Repository
 
         public E Find(int id)
         {
-            //return objs.Find(id);
             return objs.FirstOrDefault(s => s.Id == id);
         }
 

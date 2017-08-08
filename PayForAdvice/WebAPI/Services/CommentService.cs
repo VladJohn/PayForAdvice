@@ -2,8 +2,6 @@
 using Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using WebAPI.Mappings;
 using WebAPI.Models;
 
@@ -11,36 +9,38 @@ namespace WebAPI.Services
 {
     public class CommentService
     {
-        public CommentModel Add (CommentModel comment)
+        //add a new comment to a question
+        public CommentModel AddComment (CommentModel comment)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var commentRepo = uw.GetRepository<Comment>();
+                var commentRepository = unitOfWork.GetRepository<Comment>();
                 var commentToAdd = CommentMapper.MapCommentDataModel(comment);
                 commentToAdd.Date = DateTime.Now;
-                commentRepo.Add(commentToAdd);
-                uw.Save();
+                commentRepository.Add(commentToAdd);
+                unitOfWork.Save();
                 return CommentMapper.MapComment(commentToAdd);
             }
         }
 
-        public List<CommentModel> GetAllCommentsForQuestionId (int idQuestion)
+        //get all the comments for a question given by id = idQuestion
+        public List<CommentModel> GetAllCommentsByQuestionId (int idQuestion)
         {
-            var result = new List<CommentModel>();
-            using (var uw = new UnitOfWork())
+            var commentModels = new List<CommentModel>();
+            using (var unitOfWork = new UnitOfWork())
             {
-                var commentRepo = uw.GetRepository<Comment>();
-                var commentList = commentRepo.GetAll();
+                var commentRepository = unitOfWork.GetRepository<Comment>();
+                var commentList = commentRepository.GetAll();
                 foreach (var comment in commentList)
                 {
-                    if(comment.Id == idQuestion)
+                    if(comment.QuestionId == idQuestion)
                     {
-                        var c = CommentMapper.MapComment(comment);
-                        result.Add(c);
+                        var commentModel = CommentMapper.MapComment(comment);
+                        commentModels.Add(commentModel);
                     }
                 }
             }
-            return result;
+            return commentModels;
         }
     }
 }

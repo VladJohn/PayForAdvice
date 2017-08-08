@@ -36,8 +36,8 @@ namespace WebAPI
             );
             /*config.Routes.MapHttpRoute(
                name: "Facebook",
-               routeTemplate: "api/User/SignInCallBack",
-               defaults: new { id = RouteParameter.Optional }
+               routeTemplate: "api/user/{code}",
+               defaults: new { expires_in = RouteParameter.Optional }
            );*/
             FluentValidationModelValidatorProvider.Configure(config);
         }

@@ -1,9 +1,9 @@
 ﻿using Domain;
+using Domain.Enums;
 using Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using WebAPI.Mappings;
 using WebAPI.Models;
 
@@ -11,77 +11,76 @@ namespace WebAPI.Services
 {
     public class AnswerService
     {
+        //get all the answers for a user with the id = idUser
         public List<AnswerModel> GetAllAnswersByUserId(int idUser)
         {
-            var result = new List<AnswerModel>();
-            using (var uw = new UnitOfWork())
+            var answerModels = new List<AnswerModel>();
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var answerList = answerRepo.GetAll();
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var answerList = answerRepository.GetAll();
                 foreach (var answer in answerList)
                 {
                     if (answer.UserId == idUser)
                     {
-                        var a = AnswerMapper.MapAnswer(answer);
-                        result.Add(a);
+                        var answerModel = AnswerMapper.MapAnswer(answer);
+                        answerModels.Add(answerModel);
                     }
                 }
             }
-            return result;
+            return answerModels;
         }
 
-        public List<AnswerModel> GetAllAnswersByUnsolvedReports()
+        //return a list with all the answers for a user that don't have a report that isn't solved
+        public List<AnswerModel> GetAllAnswersWithUnsolvedReports()
         {
             var result = new List<AnswerModel>();
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var answerList = answerRepo.GetAll();
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var answerList = answerRepository.GetAll();
                 foreach (var answer in answerList)
                 {
-                    if (answer.Status == "unsolved")
-                    {
-                        var a = AnswerMapper.MapAnswer(answer);
-                        result.Add(a);
-                    }
+                    if (answer.Status != (int) AnswerStatusEnum.Unsolved) continue;
+                    var a = AnswerMapper.MapAnswer(answer);
+                    result.Add(a);
                 }
             }
             return result;
         }
 
-        public AnswerModel AddEmpty(int idQuestion, int idResponder)
+        //create an answer entity that has date, id of it's question and the responder id
+        public AnswerModel AddEmptyAnswer(int idQuestion, int idResponder)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var answer = new Answer { AnswerText = "", QuestionId = idQuestion, UserId = idResponder, Date = DateTime.Now, Status = "unreported"};
-                answerRepo.Add(answer);
-                uw.Save();
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var answer = new Answer { AnswerText = "", QuestionId = idQuestion, UserId = idResponder, Date = DateTime.Now, Status = (int)AnswerStatusEnum.Unsolved };
+                answerRepository.Add(answer);
+                unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answer);
             }
         }
 
+        //return the answer for a question with the id = idQuestion
         public AnswerModel GetAnAnswerByQuestionId(int idQuestion)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var questionRepo = uw.GetRepository<Question>();
-                var answerList = answerRepo.GetAll();
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var questionRepo = unitOfWork.GetRepository<Question>();
+                var answerList = answerRepository.GetAll();
                 var questionList = questionRepo.GetAll();
                 foreach (var question in questionList)
                 {
                     if (question.Id == idQuestion)
                     {
-                        if (question.Status.Equals("solved"))
+                        foreach (var answer in answerList)
                         {
-                            foreach (var answer in answerList)
+                            if (answer.QuestionId == idQuestion)
                             {
-                                if (answer.QuestionId == idQuestion)
-                                {
-                                    var a = AnswerMapper.MapAnswer(answer);
-                                    return a;
-                                }
+                                var answerModel = AnswerMapper.MapAnswer(answer);
+                                return answerModel;
                             }
                         }
                     }
@@ -90,98 +89,99 @@ namespace WebAPI.Services
             return null;
         }
 
-        public AnswerModel GetAnAnswerByQuestionIdPending(int idQuestion)
+        //return the answer that has the status  = pending and the question id = idQuestion 
+        public AnswerModel GetAPendingAnswerByQuestionId(int idQuestion)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var questionRepo = uw.GetRepository<Question>();
-                var answerList = answerRepo.GetAll();
-                var questionList = questionRepo.GetAll();
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var questionRepository = unitOfWork.GetRepository<Question>();
+                var answerList = answerRepository.GetAll();
+                var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
-                    if (question.Id == idQuestion)
+                    if (question.Id == idQuestion && question.Status == (int)QuestionStatusEnum.Pending)
                     {
-                        if (question.Status.Equals("pending"))
+                        foreach (var answer in answerList)
                         {
-                            foreach (var answer in answerList)
+                            if (answer.QuestionId == idQuestion)
                             {
-                                if (answer.QuestionId == idQuestion)
-                                {
-                                    var a = AnswerMapper.MapAnswer(answer);
-                                    return a;
-                                }
+                                var answerModel = AnswerMapper.MapAnswer(answer);
+                                return answerModel;
                             }
                         }
                     }
+                    
                 }
             }
             return null;
         }
 
+        //update the answer for a certain question
         public AnswerModel UpdateAnswer(AnswerModel answer)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var questionRepo = uw.GetRepository<Question>();
-                var answerToUpdate = answerRepo.Find(answer.Id);
-                var questionToUpdate = questionRepo.Find(answerToUpdate.QuestionId);
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var questionRepository = unitOfWork.GetRepository<Question>();
+                var answerToUpdate = answerRepository.Find(answer.Id);
+                var questionToUpdate = questionRepository.Find(answerToUpdate.QuestionId);
 
                 answerToUpdate.AnswerText = answer.AnswerText;
                 answerToUpdate.Date = DateTime.Now;
-                questionToUpdate.Status = "solved";
+                questionToUpdate.Status = (int)QuestionStatusEnum.Solved;
 
-                answerRepo.Update(answerToUpdate);
-                questionRepo.Update(questionToUpdate);
-                uw.Save();
+                answerRepository.Update(answerToUpdate);
+                questionRepository.Update(questionToUpdate);
+                unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answerToUpdate);
             }
         }
 
-        public AnswerModel UpdateRating (int id, string rating)
+        //update the rating for a certain answer given by id = idAnswer
+        public AnswerModel UpdateRating (int idAnswer, string rating)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var answerToUpdate = answerRepo.Find(id);
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var answerToUpdate = answerRepository.Find(idAnswer);
                 answerToUpdate.Rating = Int32.Parse(rating);
-                answerRepo.Update(answerToUpdate);
-                uw.Save();
+                answerRepository.Update(answerToUpdate);
+                unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answerToUpdate);
             }
         }
 
-        public AnswerModel UpdateReport (int id, string report)
+        //update the report for an answer given by id = idAnswer
+        public AnswerModel UpdateReport (int idAnswer, string report)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var answerToUpdate = answerRepo.Find(id);
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var answerToUpdate = answerRepository.Find(idAnswer);
                 answerToUpdate.ReportText = report;
-                answerToUpdate.Status = "unsolved";
-                answerRepo.Update(answerToUpdate);
-                uw.Save();
+                answerToUpdate.Status = (int)AnswerStatusEnum.Reported;
+                answerRepository.Update(answerToUpdate);
+                unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answerToUpdate);
             }
         }
 
-        public string getCategoryByAnswerId(int id)
+        //return the category of an answer guven by id = idAnswer
+        public string GetCategoryByAnswerId(int idAnswer)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var answerRepo = uw.GetRepository<Answer>();
-                var userRepo = uw.GetRepository<User>();
-                foreach (var a in answerRepo.GetAll())
+                var answerRepository = unitOfWork.GetRepository<Answer>();
+                var userRepository = unitOfWork.GetRepository<User>();
+                foreach (var answer in answerRepository.GetAll())
                 {
-                    if (a.Id == id)
+                    if (answer.Id != idAnswer) continue;
+                    foreach(var user in userRepository.GetAll())
                     {
-                        foreach(var u in userRepo.GetAll())
+                        if(answer.UserId == user.Id)
                         {
-                            if(a.UserId == u.Id)
-                            {
-                                return u.Categories.FirstOrDefault().Name;
-                            }
+                            return user.Categories.FirstOrDefault()?.Name;
                         }
                     }
                 }

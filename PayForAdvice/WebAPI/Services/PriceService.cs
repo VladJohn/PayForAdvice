@@ -1,80 +1,80 @@
-﻿using System;
-using Domain;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using WebAPI.Models;
+using Domain;
+using Domain.Enums;
 using Repository;
 using WebAPI.Mappings;
+using WebAPI.Models;
 
-public class PriceService
+namespace WebAPI.Services
 {
-	public PriceService()
-	{
-	}
-
-    public PriceModel Add(PriceModel newPrice)
+    public class PriceService
     {
-        using (var uw = new UnitOfWork())
+
+        //add a new price for an user
+        public PriceModel AddNewPrice(PriceModel newPrice)
         {
-            var repo = uw.GetRepository<Price>();
-            repo.Add(PriceMapper.MapPriceDataModel(newPrice));
-            uw.Save();
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var priceRepository = unitOfWork.GetRepository<Price>();
+                priceRepository.Add(PriceMapper.MapPriceDataModel(newPrice));
+                unitOfWork.Save();
+            }
+            return newPrice;
         }
-        return newPrice;
-    }
 
-    public PriceModelForPublicProfile GetAllPricesByUser(int idUser)
-    {
-        PriceModelForPublicProfile res = new PriceModelForPublicProfile();
-        using (var uw = new UnitOfWork())
+        //it will return an entity with the prices for a user's category
+        public PriceModelForPublicProfile GetAllPricesByUser(int idUser)
         {
-            var repo = uw.GetRepository<Price>();
-            var listUser = repo.GetAll().ToList().Where(x => x.UserId == idUser).ToList();
-            var listPrice = new List<PriceModel>();
-            foreach (var price in listUser)
+            var userPrices = new PriceModelForPublicProfile();
+            using (var unitOfWork = new UnitOfWork())
             {
-                if (price.Order.Equals("base"))
+                var priceRepository = unitOfWork.GetRepository<Price>();
+                var listUser = priceRepository.GetAll().ToList().Where(x => x.UserId == idUser).ToList();
+                var listPrice = new List<PriceModel>();
+                foreach (var price in listUser)
                 {
-                    res.Base = price.Amount;
-                    res.DetailBase = price.Details;
+                    if (price.Order == (int)PriceOrderEnum.Basic)
+                    {
+                        userPrices.Base = price.Amount;
+                        userPrices.DetailBase = price.Details;
+                    }
+                    if (price.Order == (int)PriceOrderEnum.Standard)
+                    {
+                        userPrices.Normal = price.Amount;
+                        userPrices.DetailNormal = price.Details;
+                    }
+                    if (price.Order != (int) PriceOrderEnum.Premium) continue;
+                    userPrices.Premium = price.Amount;
+                    userPrices.DetailPremium = price.Details;
                 }
-                if (price.Order.Equals("normal"))
-                {
-                    res.Normal = price.Amount;
-                    res.DetailNormal = price.Details;
-                }
-                if (price.Order.Equals("premium"))
-                {
-                    res.Premium = price.Amount;
-                    res.DetailPremium = price.Details;
-                }
+                return userPrices;
             }
-            return res;
         }
-    }
 
-    public PriceModel UpdatePrice(PriceModel updatePrice)
-    {
-        using (var uw = new UnitOfWork())
+        //it will update a price. In case that you don't have what to update, it will create a new instance and add it
+        public PriceModel UpdatePrice(PriceModel updatePrice)
         {
-            var repo = uw.GetRepository<Price>();
-            var found =  repo.GetAll().Where(x => x.Order == updatePrice.Order && x.UserId == updatePrice.UserId).FirstOrDefault();
-            if (found != null)
+            using (var unitOfWork = new UnitOfWork())
             {
-                found.Amount = updatePrice.Amount;
-                found.Order = updatePrice.Order;
-                found.Details = updatePrice.Details;
-                found.UserId = updatePrice.UserId;
-                repo.Update(found);
+                var priceRepository = unitOfWork.GetRepository<Price>();
+                var foundPrice =  priceRepository.GetAll().FirstOrDefault(x => x.Order == updatePrice.Order && x.UserId == updatePrice.UserId);
+                if (foundPrice != null)
+                {
+                    foundPrice.Amount = updatePrice.Amount;
+                    foundPrice.Order = updatePrice.Order;
+                    foundPrice.Details = updatePrice.Details;
+                    foundPrice.UserId = updatePrice.UserId;
+                    priceRepository.Update(foundPrice);
+                }
+                else
+                {
+                    var price = new Price { Amount = updatePrice.Amount, Details = updatePrice.Details, Order = updatePrice.Order, UserId = updatePrice.UserId};
+                    priceRepository.Add(price);
+                }
+                unitOfWork.Save();
+                return updatePrice;
             }
-            else
-            {
-                var price = new Price { Amount = updatePrice.Amount, Details = updatePrice.Details, Order = updatePrice.Order, UserId = updatePrice.UserId};
-                repo.Add(price);
-            }
-            uw.Save();
-            return updatePrice;
         }
     }
 }

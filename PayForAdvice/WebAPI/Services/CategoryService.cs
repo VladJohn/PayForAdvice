@@ -1,39 +1,38 @@
 ﻿using Domain;
 using Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using WebAPI.Models;
 using WebAPI.Mappings;
 
-namespace WebAPI.Service
+namespace WebAPI.Services
 {
     public class CategoryService
     {
-        public CategoryModel Add(CategoryModel newCategory)
+        //add a new category to the list
+        public CategoryModel AddCategory(CategoryModel newCategory)
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<Category>();
-                repo.Add(CategoryMapper.MapCategoryDataModel(newCategory));
-                uw.Save();
+                var categoryRepository = unitOfWork.GetRepository<Category>();
+                categoryRepository.Add(CategoryMapper.MapCategoryDataModel(newCategory));
+                unitOfWork.Save();
             }
             return newCategory;
         }
 
+        //get all the existent categories
         public List<CategoryModel> GetAllCategories()
         {
-            using (var uw = new UnitOfWork())
+            using (var unitOfWork = new UnitOfWork())
             {
-                var repo = uw.GetRepository<Category>();
-                var categories = new List<CategoryModel>();
-                foreach (var element in repo.GetAll())
+                var categoryRepository = unitOfWork.GetRepository<Category>();
+                var categoryModels = new List<CategoryModel>();
+                foreach (var category in categoryRepository.GetAll())
                 {
-                    var categoryElement = CategoryMapper.MapCategory(element);
-                    categories.Add(categoryElement);
+                    var categoryModel = CategoryMapper.MapCategory(category);
+                    categoryModels.Add(categoryModel);
                 }
-                return categories;
+                return categoryModels;
             }
         }
     }

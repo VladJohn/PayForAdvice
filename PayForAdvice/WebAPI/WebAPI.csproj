@@ -204,6 +204,7 @@
     <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="FacebookIntegration\Models\FbTokenModel.cs" />
     <Compile Include="FacebookIntegration\Models\UserFacebookModel.cs" />
     <Compile Include="FacebookIntegration\Models\UserId.cs" />
     <Compile Include="FacebookIntegration\Service\FacebookService.cs" />
@@ -245,8 +246,13 @@
     <Compile Include="Services\TokenService.cs" />
     <Compile Include="Services\UploadService.cs" />
     <Compile Include="Services\UserService.cs" />
+    <Compile Include="ValidatorsModel\AnswerValidator.cs" />
+    <Compile Include="ValidatorsModel\ModelException.cs" />
+    <Compile Include="ValidatorsModel\QuestionValidator.cs" />
+    <Compile Include="ValidatorsModel\UserValidator.cs" />
     <Compile Include="Validators\AnswerValidator.cs" />
     <Compile Include="Validators\CategoryValidator.cs" />
+    <Compile Include="ValidatorsModel\IValidatorModel.cs" />
     <Compile Include="Validators\PriceValidator.cs" />
     <Compile Include="Validators\UserValidator.cs" />
     <Compile Include="Validators\UserValidatorForProfile.cs" />

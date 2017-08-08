@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
-using WebAPI.Service;
+﻿using System.Web.Http;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
     public class RoleController : ApiController
     {
-        public IHttpActionResult Get(int IdRole)
+        //get the role with the id = idRole for a user
+        public IHttpActionResult GetRoles(int idRole)
         {
             var service = new RoleService();
-            var roles = service.Get(IdRole);
+            var roles = service.GetRole(idRole);
             if (roles == null)
                 return NotFound();
             return Ok(roles);

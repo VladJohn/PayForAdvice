@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
-using WebAPI.Service;
+﻿using System.Web.Http;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
     public class CategoryController : ApiController
     {
+        //get all the categories
         public IHttpActionResult Get()
         {
             var service = new CategoryService();
