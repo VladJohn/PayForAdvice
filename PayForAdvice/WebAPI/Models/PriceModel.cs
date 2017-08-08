@@ -17,7 +17,7 @@ namespace WebAPI.Models
         [Required]
         public string Details { get; set; }
         [Required]
-        public string Order { get; set; }
+        public int Order { get; set; }
 
         //foreign key
         public int UserId { get; set; }

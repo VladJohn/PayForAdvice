@@ -52,12 +52,15 @@
     <Compile Include="Answer.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="Comment.cs" />
+    <Compile Include="Enums\AnswerStatusEnum.cs" />
+    <Compile Include="Enums\PriceOrderEnum.cs" />
+    <Compile Include="Enums\UserStatusEnum.cs" />
     <Compile Include="Idable.cs" />
     <Compile Include="Price.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Question.cs" />
-    <Compile Include="QuestionStatusEnum.cs" />
+    <Compile Include="Enums\QuestionStatusEnum.cs" />
     <Compile Include="Role.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="Upload.cs" />

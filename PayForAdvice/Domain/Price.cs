@@ -4,7 +4,7 @@
     {
         public double Amount { get; set; }
         public string Details { get; set; }
-        public string Order { get; set; }
+        public int Order { get; set; }
 
         //foreign key
         public int UserId { get; set; }

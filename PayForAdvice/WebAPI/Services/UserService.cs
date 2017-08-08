@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Enums;
 using Repository;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace WebAPI.Services
             {
                 var userRepository = unitOfWork.GetRepository<User>();
                 var userToBeAdded = UserMapper.MapUserFromSignUp(user);
-                userToBeAdded.Status = "active";
+                userToBeAdded.Status = (int)UserStatusEnum.Active;
                 userToBeAdded.RoleId = 3;
                 userRepository.Add(userToBeAdded);
                 unitOfWork.Save();
@@ -64,7 +65,7 @@ namespace WebAPI.Services
             using (var uw = new UnitOfWork())
             {
                 var userRepository = uw.GetRepository<User>();
-                var userList = userRepository.GetAll().Where(x => x.Role.Name == "adviser" && x.Status == "active" && x.Categories.Any(c => c.Id == categoryId)).ToList();
+                var userList = userRepository.GetAll().Where(x => x.RoleId == 2 && x.Status == (int)UserStatusEnum.Active && x.Categories.Any(c => c.Id == categoryId)).ToList();
                 foreach ( var user in userList)
                 {
                     var advicer = UserMapper.MapUserForCategoryView(user);
@@ -128,7 +129,7 @@ namespace WebAPI.Services
             {
                 var userRepository = unitOfWork.GetRepository<User>();
                 var userList = userRepository.Find(userId);
-                userList.Status = "deleted";
+                userList.Status = (int)UserStatusEnum.Deleted;
                 userRepository.Update(userList);
                 unitOfWork.Save();
                 return UserMapper.MapUser(userList);
