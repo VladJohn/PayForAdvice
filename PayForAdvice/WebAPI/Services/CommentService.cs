@@ -2,8 +2,6 @@
 using Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using WebAPI.Mappings;
 using WebAPI.Models;
 
@@ -11,6 +9,7 @@ namespace WebAPI.Services
 {
     public class CommentService
     {
+        //add a new comment to a question
         public CommentModel AddComment (CommentModel comment)
         {
             using (var unitOfWork = new UnitOfWork())
@@ -24,6 +23,7 @@ namespace WebAPI.Services
             }
         }
 
+        //get all the comments for a question given by id = idQuestion
         public List<CommentModel> GetAllCommentsByQuestionId (int idQuestion)
         {
             var commentModels = new List<CommentModel>();

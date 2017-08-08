@@ -3,7 +3,7 @@ using Repository;
 using System.Linq;
 using WebAPI.Models;
 
-namespace WebAPI.Service
+namespace WebAPI.Services
 {
     public class RoleService
     {
@@ -25,7 +25,7 @@ namespace WebAPI.Service
             using (var unitOfWork = new UnitOfWork())
             {
                 var repository = unitOfWork.GetRepository<Role>();
-                var foundRole = repository.GetAll().ToList().Where(x => x.Id.Equals(idUser)).FirstOrDefault();
+                var foundRole = repository.GetAll().ToList().FirstOrDefault(x => x.Id.Equals(idUser));
                 return (foundRole == null ? null : new RoleModel { Id = foundRole.Id, Name = foundRole.Name });
             }
         }

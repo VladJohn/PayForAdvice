@@ -13,7 +13,7 @@ namespace WebAPI.Controllers
 {
     public class AnswerController : ApiController
     {
-        //GET
+        //GET all the answers for an user given by id = idUser
         public IHttpActionResult GetAllAnswersByUserId(int idUser)
         {
             var service = new AnswerService();
@@ -25,7 +25,7 @@ namespace WebAPI.Controllers
             return Ok(answers);
         }
 
-        //GET
+        //GET all the answers for a question given by id = idQuestion
         public IHttpActionResult GetAnswerByQuestionId(int idQuestion)
         {
             var service = new AnswerService();
@@ -37,6 +37,7 @@ namespace WebAPI.Controllers
             return Ok(answer);
         }
 
+        //GET a pending answer for a question given by id = idQuestionPending
         public IHttpActionResult GetAPendingAnswerByQuestionId(int idQuestionPending)
         {
             var service = new AnswerService();

@@ -1,16 +1,14 @@
 ﻿using Domain;
 using Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using WebAPI.Models;
 using WebAPI.Mappings;
 
-namespace WebAPI.Service
+namespace WebAPI.Services
 {
     public class CategoryService
     {
+        //add a new category to the list
         public CategoryModel AddCategory(CategoryModel newCategory)
         {
             using (var unitOfWork = new UnitOfWork())
@@ -22,6 +20,7 @@ namespace WebAPI.Service
             return newCategory;
         }
 
+        //get all the existent categories
         public List<CategoryModel> GetAllCategories()
         {
             using (var unitOfWork = new UnitOfWork())

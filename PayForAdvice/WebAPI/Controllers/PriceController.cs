@@ -1,11 +1,12 @@
 ﻿using System.Web.Http;
 using WebAPI.Models;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
     public class PriceController : ApiController
     {
-        //update
+        //update the price for a user
         public IHttpActionResult PutPrice(PriceModel price)
         {
             var service = new PriceService();
@@ -15,7 +16,7 @@ namespace WebAPI.Controllers
             return Ok(updatePrice);
         }
 
-        //add 
+        //add a new price for a user 
         public IHttpActionResult PostPrice(PriceModel price)
         {
             if (!ModelState.IsValid)
@@ -27,7 +28,8 @@ namespace WebAPI.Controllers
             return Ok(addPrice);
         }
 
-        //getAllByUser
+        //get all prices for a user with the id = userId
+        //if there are no prices it returns NotFound()
         public IHttpActionResult GetAllPricesForUsers(int userId)
         {
             var service = new PriceService();
