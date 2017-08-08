@@ -34,11 +34,11 @@ namespace WebAPI
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
-            config.Routes.MapHttpRoute(
+            /*config.Routes.MapHttpRoute(
                name: "Facebook",
                routeTemplate: "api/user/{code}",
                defaults: new { expires_in = RouteParameter.Optional }
-           );
+           );*/
             FluentValidationModelValidatorProvider.Configure(config);
         }
     }
