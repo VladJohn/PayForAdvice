@@ -19,7 +19,7 @@ namespace WebAPI.Services
                 var questionRepository = unitOfWork.GetRepository<Question>();
                 var questionToAdd = QuestionMapper.MapQuestionDataModel(question);
                 questionToAdd.Date = DateTime.Now;
-                questionToAdd.Status = "pending";
+                questionToAdd.Status = (int)QuestionStatusEnum.Pending;
                 questionRepository.Add(questionToAdd);
                 unitOfWork.Save();
                 return QuestionMapper.MapQuestion(questionToAdd);
@@ -121,7 +121,7 @@ namespace WebAPI.Services
                 {
                     if (answer.UserId == idAdvicer)
                     {
-                        var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status=="solved").ToList();
+                        var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == (int)QuestionStatusEnum.Solved).ToList();
                         foreach (var question in found)
                         {
                             var questionToAdd = QuestionMapper.MapQuestion(question);
@@ -146,7 +146,7 @@ namespace WebAPI.Services
                 {
                     if (answer.UserId == idAdvicer)
                     {
-                        var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == "pending").ToList();
+                        var found = questionRepository.GetAll().ToList().Where(x => x.Id.Equals(answer.QuestionId) && x.Status == (int)QuestionStatusEnum.Pending).ToList();
                         foreach (var question in found)
                         {
                             var questionToAdd = QuestionMapper.MapQuestion(question);
@@ -165,7 +165,7 @@ namespace WebAPI.Services
             {
                 var questionRepository = unitOfWork.GetRepository<Question>();
                 var question = questionRepository.Find(idQuestion);
-                question.Status = "refunded";
+                question.Status = (int)QuestionStatusEnum.Refunded;
                 questionRepository.Update(question);
                 unitOfWork.Save();
                 return QuestionMapper.MapQuestion(question);

@@ -6,6 +6,7 @@ using System.Web;
 using WebAPI.Models;
 using Repository;
 using WebAPI.Mappings;
+using Domain.Enums;
 
 public class PriceService
 {
@@ -36,17 +37,17 @@ public class PriceService
             var listPrice = new List<PriceModel>();
             foreach (var price in listUser)
             {
-                if (price.Order.Equals("base"))
+                if (price.Order == (int)PriceOrderEnum.Basic)
                 {
                     userPrices.Base = price.Amount;
                     userPrices.DetailBase = price.Details;
                 }
-                if (price.Order.Equals("normal"))
+                if (price.Order == (int)PriceOrderEnum.Standard)
                 {
                     userPrices.Normal = price.Amount;
                     userPrices.DetailNormal = price.Details;
                 }
-                if (price.Order.Equals("premium"))
+                if (price.Order == (int)PriceOrderEnum.Premium)
                 {
                     userPrices.Premium = price.Amount;
                     userPrices.DetailPremium = price.Details;

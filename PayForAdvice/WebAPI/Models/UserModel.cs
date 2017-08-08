@@ -24,7 +24,7 @@ namespace WebAPI.Models
         [EmailAddress]
         public string Email { get; set; }
         public string AvatarUrl { get; set; }
-        public string Status { get; set; }
+        public int Status { get; set; }
 
         //foreign key
         public int RoleId { get; set; }

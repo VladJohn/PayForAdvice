@@ -68,6 +68,14 @@
     <Compile Include="Migrations\201708040731445_Upgrade.Designer.cs">
       <DependentUpon>201708040731445_Upgrade.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201708071313398_statuses.cs" />
+    <Compile Include="Migrations\201708071313398_statuses.Designer.cs">
+      <DependentUpon>201708071313398_statuses.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708071415294_price-order.cs" />
+    <Compile Include="Migrations\201708071415294_price-order.Designer.cs">
+      <DependentUpon>201708071415294_price-order.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -95,6 +103,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201708040731445_Upgrade.resx">
       <DependentUpon>201708040731445_Upgrade.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708071313398_statuses.resx">
+      <DependentUpon>201708071313398_statuses.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708071415294_price-order.resx">
+      <DependentUpon>201708071415294_price-order.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

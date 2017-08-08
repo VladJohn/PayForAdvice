@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Enums;
 using Repository;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace WebAPI.Services
     public class AnswerService
     {
         
-        public List<AnswerModel> GetAllAnswersByUserId(int userId)
+        public List<AnswerModel> GetAllAnswersByUserId(int idUser)
         {
             var answerModels = new List<AnswerModel>();
             using (var unitOfWork = new UnitOfWork())
@@ -21,7 +22,7 @@ namespace WebAPI.Services
                 var answerList = answerRepository.GetAll();
                 foreach (var answer in answerList)
                 {
-                    if (answer.UserId == userId)
+                    if (answer.UserId == idUser)
                     {
                         var answerModel = AnswerMapper.MapAnswer(answer);
                         answerModels.Add(answerModel);
@@ -40,7 +41,7 @@ namespace WebAPI.Services
                 var answerList = answerRepository.GetAll();
                 foreach (var answer in answerList)
                 {
-                    if (answer.Status == "unsolved")
+                    if (answer.Status == (int)AnswerStatusEnum.Unsolved)
                     {
                         var a = AnswerMapper.MapAnswer(answer);
                         result.Add(a);
@@ -55,7 +56,7 @@ namespace WebAPI.Services
             using (var unitOfWork = new UnitOfWork())
             {
                 var answerRepository = unitOfWork.GetRepository<Answer>();
-                var answer = new Answer { AnswerText = "", QuestionId = idQuestion, UserId = idResponder, Date = DateTime.Now, Status = "unreported"};
+                var answer = new Answer { AnswerText = "", QuestionId = idQuestion, UserId = idResponder, Date = DateTime.Now, Status = (int)AnswerStatusEnum.Unsolved };
                 answerRepository.Add(answer);
                 unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answer);
@@ -98,7 +99,7 @@ namespace WebAPI.Services
                 var questionList = questionRepository.GetAll();
                 foreach (var question in questionList)
                 {
-                    if (question.Id == idQuestion && question.Status.Equals("pending"))
+                    if (question.Id == idQuestion && question.Status == (int)QuestionStatusEnum.Pending)
                     {
                         foreach (var answer in answerList)
                         {
@@ -126,7 +127,7 @@ namespace WebAPI.Services
 
                 answerToUpdate.AnswerText = answer.AnswerText;
                 answerToUpdate.Date = DateTime.Now;
-                questionToUpdate.Status = "solved";
+                questionToUpdate.Status = (int)QuestionStatusEnum.Solved;
 
                 answerRepository.Update(answerToUpdate);
                 questionRepository.Update(questionToUpdate);
@@ -155,7 +156,7 @@ namespace WebAPI.Services
                 var answerRepository = unitOfWork.GetRepository<Answer>();
                 var answerToUpdate = answerRepository.Find(idAnswer);
                 answerToUpdate.ReportText = report;
-                answerToUpdate.Status = "reported";
+                answerToUpdate.Status = (int)AnswerStatusEnum.Reported;
                 answerRepository.Update(answerToUpdate);
                 unitOfWork.Save();
                 return AnswerMapper.MapAnswer(answerToUpdate);

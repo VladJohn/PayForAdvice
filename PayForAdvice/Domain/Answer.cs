@@ -8,7 +8,7 @@ namespace Domain
         public string AnswerText { get; set; }
         public int Rating { get; set; }
         public DateTime Date { get; set; }
-        public string Status { get; set; }
+        public int Status { get; set; }
         public string ReportText { get; set; }
 
         public int QuestionId { get; set; }

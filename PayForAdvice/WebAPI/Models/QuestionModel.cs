@@ -12,7 +12,7 @@ namespace WebAPI.Models
         [Required]
         public string QuestionText { get; set; }
         public DateTime Date { get; set; }
-        public string Status { get; set; }
+        public int Status { get; set; }
         public string Order { get; set; }
 
         public int UserId { get; set; }
