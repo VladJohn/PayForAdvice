@@ -1,10 +1,6 @@
 ﻿using Domain;
 using Repository;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using WebAPI.Mappings;
 using WebAPI.Models;
 
 namespace WebAPI.Service
@@ -17,7 +13,7 @@ namespace WebAPI.Service
             using (var unitOfWork = new UnitOfWork())
             {
                 var repository = unitOfWork.GetRepository<Role>();
-                repository.Add(RoleMapper.MapRoleDataModel(newRole));
+                repository.Add(new Role { Id = newRole.Id, Name = newRole.Name });
                 unitOfWork.Save();
             }
             return newRole;
@@ -30,9 +26,7 @@ namespace WebAPI.Service
             {
                 var repository = unitOfWork.GetRepository<Role>();
                 var foundRole = repository.GetAll().ToList().Where(x => x.Id.Equals(idUser)).FirstOrDefault();
-                if (foundRole == null)
-                    return null;
-                return RoleMapper.MapRole(foundRole);
+                return (foundRole == null ? null : new RoleModel { Id = foundRole.Id, Name = foundRole.Name });
             }
         }
     }
