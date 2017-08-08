@@ -11,6 +11,7 @@ using WebAPI.FacebookIntegration.Service;
 using WebAPI.Models;
 using WebAPI.Services;
 using System;
+using WebAPI.ValidatorsModel;
 
 namespace WebAPI.Controllers
 {
@@ -46,23 +47,28 @@ namespace WebAPI.Controllers
             var token = userService.LogIn(username, password);
             if (token == null)
             {
-                return BadRequest();
+                return BadRequest("Wrong username or password.");
             }
             return Ok(token);
         }
 
         public IHttpActionResult PostUser(UserModelForSignUp user)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             var userService = new UserService();
-            var userAdded = userService.AddUser(user);
+            UserModelForSignUp userAdded = null;
+            try
+            {
+                userAdded = userService.AddUser(user);
+            }
+            catch (ModelException exception)
+            {
+                return BadRequest(exception.Message);
+            }
             if (userAdded == null)
             {
                 return NotFound();
             }
+
             return Ok(userAdded);
         }
 
