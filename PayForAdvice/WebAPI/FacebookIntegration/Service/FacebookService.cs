@@ -15,6 +15,8 @@ namespace WebAPI.FacebookIntegration.Service
     {
         public const string ApiVersion = "2.10";
 
+        private string AccessToken { get; set; }
+
         //Luiza
         //private const string AppId = "295726730896928";
         //private const string AppSecret = "ecbcc5a8fe2b5d6c713aa4e4c87f28bc";
@@ -29,11 +31,13 @@ namespace WebAPI.FacebookIntegration.Service
         private const string BaseUrl = "https://graph.facebook.com/";
         private const string VideoBaseUrl = "https://graph-video.facebook.com.";
 
+        public FacebookService(string AccessToken) {
+            this.AccessToken = AccessToken;
+        }
 
-        private const string AccessToken =
-                "EAACEdEose0cBAEXIEVh3LyytpPwzt3M0W52jfeWIC4LZApYKdjYa64UYIbQjQZByYTmwZAQ8gCtn5rdtxRfeIYMk3IJ2ZBOJZC3OTx7rnyrlDHFRiGqbcNS8GmZAXhC1RqTZAVZB4HPVhyhPGRj10A7zmG7PYPyviIsvYdvKpbTh8qpkufOlVmPQrBAvSXboO70ZD"
-            ;
-
+        public FacebookService()
+        {
+        }
         private static readonly HttpClient HttpClient = new HttpClient();
 
 
@@ -99,14 +103,13 @@ namespace WebAPI.FacebookIntegration.Service
                 {
                     throw new Exception("Empty content");
                 }
-                return JsonConvert.DeserializeObject<T>(content);
+                return JsonConvert.DeserializeObject<T>(content); ;
             }
         }
 
         private async Task<T> ExecutePostRequest<T>(Uri uri, HttpContent httpContent)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
-            //var content = new StringContent();
             requestMessage.Content = httpContent;
             using (var httpResponseMessage = await HttpClient.SendAsync(requestMessage))
             {
