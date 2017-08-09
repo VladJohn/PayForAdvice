@@ -60,13 +60,15 @@ namespace WebAPI.Services
             return null;
         }
 
-        public void UnAuthorize(string tokenText)
+        public string UnAuthorize(string tokenText)
         {
             using (var unitOfWork = new UnitOfWork())
             {
                 var tokenRepository = unitOfWork.GetRepository<Token>();
                 var token = tokenRepository.GetAll().Where(x=> x.TokenText == tokenText).FirstOrDefault();
                 tokenRepository.Remove(token.Id);
+                unitOfWork.Save();
+                return "removed";
             }
 
         }

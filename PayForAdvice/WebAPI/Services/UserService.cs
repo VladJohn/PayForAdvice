@@ -43,6 +43,8 @@ namespace WebAPI.Services
                 var userToBeAdded = new User();
                 userToBeAdded.Name = name;
                 userToBeAdded.Email = email;
+                userToBeAdded.Username = email;
+                userToBeAdded.Password = Guid.NewGuid().ToString();
                 userToBeAdded.AvatarUrl = pictureUrl;
                 userToBeAdded.Status = (int)UserStatusEnum.Active;
                 userToBeAdded.RoleId = 3;
