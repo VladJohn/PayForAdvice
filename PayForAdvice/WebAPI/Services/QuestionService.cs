@@ -93,7 +93,6 @@ namespace WebAPI.Services
         //returns the question with the id = idQuestion
         public QuestionModel GetQuestionById(int idQuestion)
         {
-            var result = new QuestionModel();
             using (var unitOfWork = new UnitOfWork())
             {
                 var questionRepository = unitOfWork.GetRepository<Question>();

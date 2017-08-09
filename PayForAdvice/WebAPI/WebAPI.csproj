@@ -249,7 +249,10 @@
     <Compile Include="ValidatorsModel\AdviserValidator.cs" />
     <Compile Include="ValidatorsModel\AnswerValidator.cs" />
     <Compile Include="ValidatorsModel\ModelException.cs" />
+    <Compile Include="ValidatorsModel\PriceValidator.cs" />
     <Compile Include="ValidatorsModel\QuestionValidator.cs" />
+    <Compile Include="ValidatorsModel\ReportValidator.cs" />
+    <Compile Include="ValidatorsModel\UserModelForProfileValidator.cs" />
     <Compile Include="ValidatorsModel\UserValidator.cs" />
     <Compile Include="Validators\AnswerValidator.cs" />
     <Compile Include="Validators\CategoryValidator.cs" />

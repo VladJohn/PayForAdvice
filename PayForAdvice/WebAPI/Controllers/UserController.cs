@@ -158,13 +158,17 @@ namespace WebAPI.Controllers
             var authorizedToken = tokenService.IsAuthorizedBase(token);
             if (authorizedToken != null)
             {
-                if (!ModelState.IsValid)
-                {
-                    tokenService.Update(authorizedToken.Id);
-                    return BadRequest();
-                }
                 var userService = new UserService();
-                var updatedUserProfile = userService.UpdateUserProfile(user);
+                UserModelForProfile updatedUserProfile;
+                try
+                {
+                    updatedUserProfile = userService.UpdateUserProfile(user);
+                }
+                catch (ModelException exception)
+                {
+                    return BadRequest(exception.Message);
+
+                }
                 if (updatedUserProfile == null)
                 {
                     tokenService.Update(authorizedToken.Id);

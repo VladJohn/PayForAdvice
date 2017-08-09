@@ -1,6 +1,8 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using WebAPI.Models;
 using WebAPI.Services;
+using WebAPI.ValidatorsModel;
 
 namespace WebAPI.Controllers
 {
@@ -10,7 +12,15 @@ namespace WebAPI.Controllers
         public IHttpActionResult PutPrice(PriceModel price)
         {
             var service = new PriceService();
-            var updatePrice = service.UpdatePrice(price);
+            PriceModel updatePrice;
+            try
+            {
+                updatePrice = service.UpdatePrice(price);
+            }
+            catch (ModelException exception)
+            {
+                return BadRequest(exception.Message);
+            }
             if (updatePrice == null)
                 return NotFound();
             return Ok(updatePrice);
@@ -19,10 +29,16 @@ namespace WebAPI.Controllers
         //add a new price for a user 
         public IHttpActionResult PostPrice(PriceModel price)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
             var service = new PriceService();
-            var addPrice = service.AddNewPrice(price);
+            PriceModel addPrice;
+            try
+            {
+                addPrice = service.AddNewPrice(price);
+            }
+            catch (ModelException exception)
+            {
+                return BadRequest(exception.Message);
+            }
             if (addPrice == null)
                 return BadRequest();
             return Ok(addPrice);
