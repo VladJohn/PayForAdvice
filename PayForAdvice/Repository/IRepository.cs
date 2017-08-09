@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Repository
 {
     public interface IRepository<E>
     {
-        void Add(E entity);
+        E Add(E entity);
 
         void Remove(int id);
 

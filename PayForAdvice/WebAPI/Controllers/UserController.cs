@@ -81,10 +81,38 @@ namespace WebAPI.Controllers
         public IHttpActionResult PostUser(UserModelForSignUp user)
         {
             var userService = new UserService();
+            var priceService = new PriceService();
             UserModelForSignUp userAdded = null;
             try
             {
                 userAdded = userService.AddUser(user);
+            }
+            catch (ModelException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            if (userAdded == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userAdded);
+        }
+
+        [System.Web.Http.Route("api/user/adviser")]
+        public IHttpActionResult PostAdvicer(UserModelForSignUpAdviser adviser)
+        {
+            var userService = new UserService();
+            var priceService = new PriceService();
+            var categoryService = new CategoryService();
+            UserModelForSignUpAdviser userAdded = null;
+            try
+            {
+                userAdded = userService.AddAdviser(adviser);
+                priceService.AddNewPrice(new PriceModel { Amount = 5, Details = "Standard services", Order = 0, UserId = userAdded.Id });
+                priceService.AddNewPrice(new PriceModel { Amount = 5, Details = "Standard services", Order = 1, UserId = userAdded.Id });
+                priceService.AddNewPrice(new PriceModel { Amount = 5, Details = "Standard services", Order = 2, UserId = userAdded.Id });
+                categoryService.AddCategoryToUser(userAdded.Id, adviser.CategoryId);
             }
             catch (ModelException exception)
             {

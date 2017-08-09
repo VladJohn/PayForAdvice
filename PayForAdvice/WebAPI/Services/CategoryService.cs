@@ -20,6 +20,20 @@ namespace WebAPI.Services
             return newCategory;
         }
 
+        public void AddCategoryToUser(int userId, int categoryId)
+        {
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var categoryRepository = unitOfWork.GetRepository<Category>();
+                var userRepository = unitOfWork.GetRepository<User>();
+                var category = categoryRepository.Find(categoryId);
+                var user = userRepository.Find(userId);
+                category.Users.Add(user);
+                unitOfWork.Save();
+            }
+
+        }
+
         //get all the existent categories
         public List<CategoryModel> GetAllCategories()
         {

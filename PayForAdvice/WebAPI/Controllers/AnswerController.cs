@@ -8,6 +8,7 @@ using WebAPI.FacebookIntegration.Models;
 using WebAPI.FacebookIntegration.Service;
 using WebAPI.Models;
 using WebAPI.Services;
+using WebAPI.ValidatorsModel;
 
 namespace WebAPI.Controllers
 {
@@ -66,15 +67,21 @@ namespace WebAPI.Controllers
         //PUT
         public IHttpActionResult PutAnswer(AnswerModel answer)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
             var service = new AnswerService();
-            var updateAnswer = service.UpdateAnswer(answer);
-            if (updateAnswer == null)
+            AnswerModel updatedAnswer;
+            try
+            {
+                updatedAnswer = service.UpdateAnswer(answer);
+            }
+            catch(ModelException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            if (updatedAnswer == null)
             {
                 return BadRequest();
             }
-            return Ok(updateAnswer);
+            return Ok(updatedAnswer);
         }
 
         //PUT
