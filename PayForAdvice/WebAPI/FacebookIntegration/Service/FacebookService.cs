@@ -37,6 +37,7 @@ namespace WebAPI.FacebookIntegration.Service
 
         public FacebookService()
         {
+            this.AccessToken = "";
         }
         private static readonly HttpClient HttpClient = new HttpClient();
 
