@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain;
 using Domain.Enums;
 using Repository;
 using WebAPI.Mappings;
 using WebAPI.Models;
+using WebAPI.ValidatorsModel;
 
 namespace WebAPI.Services
 {
@@ -14,6 +16,12 @@ namespace WebAPI.Services
         //add a new price for an user
         public PriceModel AddNewPrice(PriceModel newPrice)
         {
+            var validator = new PriceValidator();
+            var errors = validator.Check(newPrice);
+            if (errors.Count != 0)
+            {
+                throw new ModelException(string.Join(Environment.NewLine, errors));
+            }
             using (var unitOfWork = new UnitOfWork())
             {
                 var priceRepository = unitOfWork.GetRepository<Price>();
@@ -31,7 +39,6 @@ namespace WebAPI.Services
             {
                 var priceRepository = unitOfWork.GetRepository<Price>();
                 var listUser = priceRepository.GetAll().ToList().Where(x => x.UserId == idUser).ToList();
-                var listPrice = new List<PriceModel>();
                 foreach (var price in listUser)
                 {
                     if (price.Order == (int)PriceOrderEnum.Basic)
@@ -55,6 +62,12 @@ namespace WebAPI.Services
         //it will update a price. In case that you don't have what to update, it will create a new instance and add it
         public PriceModel UpdatePrice(PriceModel updatePrice)
         {
+            var validator = new PriceValidator();
+            var errors = validator.Check(updatePrice);
+            if (errors.Count != 0)
+            {
+                throw new ModelException(string.Join(Environment.NewLine, errors));
+            }
             using (var unitOfWork = new UnitOfWork())
             {
                 var priceRepository = unitOfWork.GetRepository<Price>();

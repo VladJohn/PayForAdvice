@@ -12,11 +12,8 @@ namespace WebAPI.Models
     public class PriceModel
     {
         public int Id { get; set; }
-        [Required]
         public double Amount { get; set; }
-        [Required]
         public string Details { get; set; }
-        [Required]
         public int Order { get; set; }
 
         //foreign key
