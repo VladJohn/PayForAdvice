@@ -6,11 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using WebAPI.Mappings;
 using WebAPI.Models;
+using WebAPI.ValidatorsModel;
 
 namespace WebAPI.Services
 {
     public class AnswerService
     {
+        private AnswerValidator validator = new AnswerValidator();
+
         //get all the answers for a user with the id = idUser
         public List<AnswerModel> GetAllAnswersByUserId(int idUser)
         {
@@ -131,6 +134,11 @@ namespace WebAPI.Services
                 answerToUpdate.Date = DateTime.Now;
                 questionToUpdate.Status = (int)QuestionStatusEnum.Solved;
 
+                var errors = validator.Check(answer);
+                if (errors.Count != 0)
+                {
+                    throw new ModelException(string.Join(Environment.NewLine, errors));
+                }
                 answerRepository.Update(answerToUpdate);
                 questionRepository.Update(questionToUpdate);
                 unitOfWork.Save();

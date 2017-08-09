@@ -15,11 +15,12 @@ namespace WebAPI.Services
 {
     public class UserService
     {
-        private UserValidator validator = new UserValidator();
+        private UserValidator validatorUser = new UserValidator();
+        private AdviserValidator validatorAdviser = new AdviserValidator();
 
         public UserModelForSignUp AddUser(UserModelForSignUp user)
         {
-            var errors = validator.Check(user);
+            var errors = validatorUser.Check(user);
             if (errors.Count != 0)
             {
                 throw new ModelException(string.Join(Environment.NewLine, errors));
@@ -29,9 +30,29 @@ namespace WebAPI.Services
                 var userRepository = unitOfWork.GetRepository<User>();
                 var userToBeAdded = UserMapper.MapUserFromSignUp(user);
                 userToBeAdded.Status = (int)UserStatusEnum.Active;
-                userRepository.Add(userToBeAdded);
+                var addedUser = userRepository.Add(userToBeAdded);
+
                 unitOfWork.Save();
-                return user;
+                return new UserModelForSignUp { Id = addedUser.Id, Email= addedUser.Email, Name = addedUser.Name, Password =addedUser.Password, RoleId = addedUser.RoleId, Username = addedUser.Username};
+            }
+        }
+
+        public UserModelForSignUpAdviser AddAdviser(UserModelForSignUpAdviser adviser)
+        {
+            var errors = validatorAdviser.Check(adviser);
+            if (errors.Count != 0)
+            {
+                throw new ModelException(string.Join(Environment.NewLine, errors));
+            }
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userToBeAdded = new User { AvatarUrl = adviser.AvatarUrl, Email = adviser.Email, Name = adviser.Name, Password = adviser.Password, RoleId = adviser.RoleId, Website = adviser.Website, Username = adviser.Username };
+                userToBeAdded.Status = (int)UserStatusEnum.Active;
+                var addedUser = userRepository.Add(userToBeAdded);
+
+                unitOfWork.Save();
+                return new UserModelForSignUpAdviser { Website = addedUser.Website, AvatarUrl = addedUser.AvatarUrl, Id = addedUser.Id, Email = addedUser.Email, Name = addedUser.Name, Password = addedUser.Password, RoleId = addedUser.RoleId, Username = addedUser.Username };
             }
         }
 
