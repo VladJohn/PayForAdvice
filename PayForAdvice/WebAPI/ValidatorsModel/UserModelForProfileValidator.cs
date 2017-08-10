@@ -37,7 +37,7 @@ namespace WebAPI.ValidatorsModel
             {
                 _errors.Add("Please enter a password");
             }
-            else if (entity.Password.Length < 8)
+            else if (entity.Password.Length < 5)
             {
                 _errors.Add("Please enter a longer password");
             }     

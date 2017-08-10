@@ -31,6 +31,7 @@ namespace WebAPI.Services
                 var userRepository = unitOfWork.GetRepository<User>();
                 var userToBeAdded = UserMapper.MapUserFromSignUp(user);
                 userToBeAdded.Status = (int)UserStatusEnum.Active;
+                userToBeAdded.AvatarUrl = "/avatar.jpg";
                 var addedUser = userRepository.Add(userToBeAdded);
 
                 unitOfWork.Save();
@@ -50,6 +51,10 @@ namespace WebAPI.Services
                 var userRepository = unitOfWork.GetRepository<User>();
                 var userToBeAdded = new User { AvatarUrl = adviser.AvatarUrl, Email = adviser.Email, Name = adviser.Name, Password = adviser.Password, RoleId = adviser.RoleId, Website = adviser.Website, Username = adviser.Username };
                 userToBeAdded.Status = (int)UserStatusEnum.Active;
+                if (string.IsNullOrEmpty(userToBeAdded.AvatarUrl))
+                {
+                    userToBeAdded.AvatarUrl = "/avatar.jpg";
+                }
                 var addedUser = userRepository.Add(userToBeAdded);
 
                 unitOfWork.Save();
