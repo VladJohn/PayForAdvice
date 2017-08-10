@@ -236,7 +236,7 @@ namespace WebAPI.Services
                 var userList = userRepository.GetAll();
                 foreach(var userInList in userList)
                 {
-                    if(user.Email.Equals(userInList.Email))
+                    if(user.Email != null && user.Email.Equals(userInList.Email))
                     {
                         return true;
                     }
