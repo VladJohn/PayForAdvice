@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using WebAPI.Models;
 using WebAPI.Validators;
 
@@ -10,7 +11,8 @@ namespace WebAPI.ValidatorsModel
 
         public List<string> Check(PriceModel entity)
         {
-            if (entity.Amount < 0)
+            double x;
+            if (entity.Amount < 0 || double.TryParse(entity.Amount.ToString(CultureInfo.InvariantCulture), out x) != true)
             {
                 _errors.Add("Please enter a valid price");
             }
