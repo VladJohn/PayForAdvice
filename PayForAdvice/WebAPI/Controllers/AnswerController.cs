@@ -50,8 +50,6 @@ namespace WebAPI.Controllers
             return Ok(answer);
         }
 
-        
-
         //GET
         public IHttpActionResult GetAllAnswersWithUnsolvedReports()
         {
@@ -115,16 +113,23 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<UserId> PostRecievedAnswerOnFacebook(int idAnswer)
         {
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var tokenService = new TokenService();
+            var authorizedToken = tokenService.IsAuthorizedBase(token);
             AnswerService service = new AnswerService();
             var category = service.GetCategoryByAnswerId(idAnswer);
-            FacebookService facebookService = new FacebookService();
+            FacebookService facebookService = new FacebookService(token);
             return await facebookService.ShareAdviceGiven(category);
         }
 
         [HttpPost]
         public async Task<UserId> PostReceivedRatingOnFacebook(int rating)
         {
-            FacebookService facebookService = new FacebookService();
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var tokenService = new TokenService();
+            var authorizedToken = tokenService.IsAuthorizedBase(token);
+            AnswerService service = new AnswerService();
+            FacebookService facebookService = new FacebookService(token);
             return await facebookService.ShareRatingGiven(rating);
         }
 
