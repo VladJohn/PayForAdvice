@@ -12,6 +12,7 @@ using WebAPI.Services;
 using System;
 using WebAPI.ValidatorsModel;
 using System.Net.Http;
+using Domain.Enums;
 
 namespace WebAPI.Controllers
 {
@@ -109,9 +110,9 @@ namespace WebAPI.Controllers
             try
             {
                 userAdded = userService.AddAdviser(adviser);
-                priceService.AddNewPrice(new PriceModel { Amount = 5, Details = "Standard services", Order = 0, UserId = userAdded.Id });
-                priceService.AddNewPrice(new PriceModel { Amount = 5, Details = "Standard services", Order = 1, UserId = userAdded.Id });
-                priceService.AddNewPrice(new PriceModel { Amount = 5, Details = "Standard services", Order = 2, UserId = userAdded.Id });
+                priceService.AddNewPrice(new PriceModel { Amount = 5, Details = "basic services", Order = (int)PriceOrderEnum.Basic, UserId = userAdded.Id });
+                priceService.AddNewPrice(new PriceModel { Amount = 10, Details = "premium services", Order = (int)PriceOrderEnum.Premium, UserId = userAdded.Id });
+                priceService.AddNewPrice(new PriceModel { Amount = 7, Details = "standard services", Order = (int)PriceOrderEnum.Standard, UserId = userAdded.Id });
                 categoryService.AddCategoryToUser(userAdded.Id, adviser.CategoryId);
             }
             catch (ModelException exception)
