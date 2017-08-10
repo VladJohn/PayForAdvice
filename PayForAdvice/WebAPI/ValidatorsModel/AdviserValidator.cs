@@ -3,6 +3,7 @@ using Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using WebAPI.Models;
 using WebAPI.Validators;
@@ -15,21 +16,35 @@ namespace WebAPI.ValidatorsModel
 
         public List<string> Check(UserModelForSignUpAdviser entity)
         {
-            if (entity.Email == null || entity.Email == "")
-            {
-                errors.Add("Please enter an e-mail address");
-            }
-            if (entity.Name == null || entity.Name == "")
+            if (string.IsNullOrEmpty(entity.Name))
             {
                 errors.Add("Please enter your name");
             }
-            if (entity.Password == null || entity.Password == "" || entity.Password.Length < 5)
+            if (entity.Name.Length < 5 || entity.Name.Contains(" ") != true || entity.Name.IndexOf(" ") == entity.Name.Length - 1)
             {
-                errors.Add("Your password must be at least 5 characters long");
+                errors.Add("Please enter a correct name");
             }
-            if (entity.Username == null || entity.Username == "")
+            if (string.IsNullOrEmpty(entity.Email))
             {
-                errors.Add("Please enter an username");
+                errors.Add("Please enter an email adress");
+            }
+            const string matchEmailPattern = @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@"
+                                             + @"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?
+				[0-9]{1,2}|25[0-5]|2[0-4][0-9])\."
+                                             + @"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?
+				[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                                             + @"([a-zA-Z0-9]+[\w-]+\.)+[a-zA-Z]{1}[a-zA-Z0-9-]{1,23})$";
+            if (Regex.IsMatch(entity.Email, matchEmailPattern) == false)
+            {
+                errors.Add("Please enter a valid email adress");
+            }
+            if (string.IsNullOrEmpty(entity.Password))
+            {
+                errors.Add("Please enter a password");
+            }
+            else if (entity.Password.Length < 5)
+            {
+                errors.Add("Please enter a longer password");
             }
             if (entity.CategoryId <= 0)
             {
