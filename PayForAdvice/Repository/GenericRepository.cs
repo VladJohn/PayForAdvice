@@ -19,9 +19,9 @@ namespace Repository
             this.dbc = dbc;
         }
 
-        public void Add(E entity)
+        public E Add(E entity)
         {
-            objs.Add(entity);
+            return objs.Add(entity);
         }
 
         public void Remove(int id)

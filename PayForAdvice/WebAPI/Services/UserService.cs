@@ -10,16 +10,18 @@ using WebAPI.FacebookIntegration.Models;
 using WebAPI.Mappings;
 using WebAPI.Models;
 using WebAPI.ValidatorsModel;
+using static System.Web.HttpContext;
 
 namespace WebAPI.Services
 {
     public class UserService
     {
-        private UserValidator validator = new UserValidator();
+        private UserValidator validatorUser = new UserValidator();
+        private AdviserValidator validatorAdviser = new AdviserValidator();
 
         public UserModelForSignUp AddUser(UserModelForSignUp user)
         {
-            var errors = validator.Check(user);
+            var errors = validatorUser.Check(user);
             if (errors.Count != 0)
             {
                 throw new ModelException(string.Join(Environment.NewLine, errors));
@@ -29,9 +31,34 @@ namespace WebAPI.Services
                 var userRepository = unitOfWork.GetRepository<User>();
                 var userToBeAdded = UserMapper.MapUserFromSignUp(user);
                 userToBeAdded.Status = (int)UserStatusEnum.Active;
-                userRepository.Add(userToBeAdded);
+                userToBeAdded.AvatarUrl = "/avatar.jpg";
+                var addedUser = userRepository.Add(userToBeAdded);
+
                 unitOfWork.Save();
-                return user;
+                return new UserModelForSignUp { Id = addedUser.Id, Email= addedUser.Email, Name = addedUser.Name, Password =addedUser.Password, RoleId = addedUser.RoleId, Username = addedUser.Username};
+            }
+        }
+
+        public UserModelForSignUpAdviser AddAdviser(UserModelForSignUpAdviser adviser)
+        {
+            var errors = validatorAdviser.Check(adviser);
+            if (errors.Count != 0)
+            {
+                throw new ModelException(string.Join(Environment.NewLine, errors));
+            }
+            using (var unitOfWork = new UnitOfWork())
+            {
+                var userRepository = unitOfWork.GetRepository<User>();
+                var userToBeAdded = new User { AvatarUrl = adviser.AvatarUrl, Email = adviser.Email, Name = adviser.Name, Password = adviser.Password, RoleId = adviser.RoleId, Website = adviser.Website, Username = adviser.Username };
+                userToBeAdded.Status = (int)UserStatusEnum.Active;
+                if (string.IsNullOrEmpty(userToBeAdded.AvatarUrl))
+                {
+                    userToBeAdded.AvatarUrl = "/avatar.jpg";
+                }
+                var addedUser = userRepository.Add(userToBeAdded);
+
+                unitOfWork.Save();
+                return new UserModelForSignUpAdviser { Website = addedUser.Website, AvatarUrl = addedUser.AvatarUrl, Id = addedUser.Id, Email = addedUser.Email, Name = addedUser.Name, Password = addedUser.Password, RoleId = addedUser.RoleId, Username = addedUser.Username };
             }
         }
 
@@ -43,6 +70,8 @@ namespace WebAPI.Services
                 var userToBeAdded = new User();
                 userToBeAdded.Name = name;
                 userToBeAdded.Email = email;
+                userToBeAdded.Username = email;
+                userToBeAdded.Password = Guid.NewGuid().ToString();
                 userToBeAdded.AvatarUrl = pictureUrl;
                 userToBeAdded.Status = (int)UserStatusEnum.Active;
                 userToBeAdded.RoleId = 3;
@@ -123,6 +152,11 @@ namespace WebAPI.Services
 
         public UserModelForProfile UpdateUserProfile(UserModelForProfile user)
         {
+            var errors = new UserModelForProfileValidator().Check(user);
+            if (errors.Count != 0)
+            {
+                throw new ModelException(string.Join(Environment.NewLine, errors));
+            }
             using (var unitOfWork = new UnitOfWork())
             {
                 var userRepository = unitOfWork.GetRepository<User>();
@@ -180,11 +214,17 @@ namespace WebAPI.Services
             }
         }
 
-        private string GetClientIp()
+        private static string GetClientIp()
         {
-            var ip = HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : "";
-            var context = new HttpContextWrapper(HttpContext.Current);
-            var request = (HttpRequestMessage)HttpContext.Current.Items["MS_HttpRequestMessage"];
+            var ip = Current != null ? Current.Request.UserHostAddress : "";
+            if (Current != null)
+            {
+                var context = new HttpContextWrapper(Current);
+            }
+            if (Current != null)
+            {
+                var request = (HttpRequestMessage) Current.Items["MS_HttpRequestMessage"];
+            }
             return ip;
         }
 
@@ -196,7 +236,7 @@ namespace WebAPI.Services
                 var userList = userRepository.GetAll();
                 foreach(var userInList in userList)
                 {
-                    if(user.Email.Equals(userInList.Email))
+                    if(user.Email != null && user.Email.Equals(userInList.Email))
                     {
                         return true;
                     }

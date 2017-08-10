@@ -1,7 +1,9 @@
-﻿using Domain;
+﻿using System;
+using Domain;
 using Repository;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using WebAPI.Models;
 using WebAPI.Validators;
 
@@ -13,21 +15,31 @@ namespace WebAPI.ValidatorsModel
 
         public List<string> Check(UserModelForSignUp entity)
         {
-            if (entity.Email == null || entity.Email == "")
+            const string matchUsernamePattern = @"^(?=[a-zA-Z])[-\w.]{0,23}([a-zA-Z\d]|(?<![-.])_)$";
+            const string matchEmailPattern = @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@"
+                                             + @"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?
+				[0-9]{1,2}|25[0-5]|2[0-4][0-9])\."
+                                             + @"([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?
+				[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
+                                             + @"([a-zA-Z0-9]+[\w-]+\.)+[a-zA-Z]{1}[a-zA-Z0-9-]{1,23})$";
+            const string matchNamePattern = @"^[a-z 'A-Z\s]+$";
+            if (string.IsNullOrEmpty(entity.Email) || Regex.IsMatch(entity.Email, matchEmailPattern) == false )
             {
-                errors.Add("Please enter an e-mail address");
+                errors.Add("Please enter a valid e-mail address");
             }
-            if (entity.Name == null || entity.Name == "")
+            if (string.IsNullOrEmpty(entity.Name) || Regex.IsMatch(entity.Name, matchNamePattern) == false || 
+                entity.Name.IndexOf(" ") == entity.Name.Length - 1 || entity.Name.Contains(" ") != true )
             {
-                errors.Add("Please enter your name");
+                errors.Add("Please enter a valid name");
             }
-            if (entity.Password == null || entity.Password == "" || entity.Password.Length<5)
+            if (string.IsNullOrEmpty(entity.Password) || entity.Password.Length<5)
             {
                 errors.Add("Your password must be at least 5 characters long");
             }
-            if (entity.Username == null || entity.Username == "")
+            
+            if (string.IsNullOrEmpty(entity.Username) || Regex.IsMatch(entity.Username, matchUsernamePattern) == false)
             {
-                errors.Add("Please enter an username");
+                errors.Add("Please enter an valid username");
             }
             using (var unitOfWork = new UnitOfWork())
             {

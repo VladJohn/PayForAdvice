@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,6 +11,8 @@ using WebAPI.Models;
 using WebAPI.Services;
 using System;
 using WebAPI.ValidatorsModel;
+using System.Net.Http;
+using Domain.Enums;
 
 namespace WebAPI.Controllers
 {
@@ -41,6 +42,32 @@ namespace WebAPI.Controllers
             return BadRequest();
         }
 
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult DeleteToken(string tokenText)
+        {
+            var token = HttpContext.Current.Request.Headers["TokenText"];
+            var tokenService = new TokenService();
+            var authorizedToken = tokenService.IsAuthorizedBase(token);
+            if (authorizedToken == null)
+            {
+                authorizedToken = tokenService.IsAuthorizedAdviser(token);
+                if(authorizedToken == null)
+                {
+                    authorizedToken = tokenService.IsAuthorizedAdmin(token);
+                }
+            }
+            if (authorizedToken != null)
+            {
+                var deletedToken = tokenService.UnAuthorize(token);
+                if (deletedToken == null)
+                {
+                    return NotFound();
+                }
+                return Ok(deletedToken);
+            }
+            return BadRequest();
+        }
+
         public IHttpActionResult GetLogIn(string username, string password)
         {
             var userService = new UserService();
@@ -55,10 +82,38 @@ namespace WebAPI.Controllers
         public IHttpActionResult PostUser(UserModelForSignUp user)
         {
             var userService = new UserService();
+            var priceService = new PriceService();
             UserModelForSignUp userAdded = null;
             try
             {
                 userAdded = userService.AddUser(user);
+            }
+            catch (ModelException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            if (userAdded == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userAdded);
+        }
+
+        [System.Web.Http.Route("api/user/adviser")]
+        public IHttpActionResult PostAdvicer(UserModelForSignUpAdviser adviser)
+        {
+            var userService = new UserService();
+            var priceService = new PriceService();
+            var categoryService = new CategoryService();
+            UserModelForSignUpAdviser userAdded = null;
+            try
+            {
+                userAdded = userService.AddAdviser(adviser);
+                priceService.AddNewPrice(new PriceModel { Amount = 5, Details = "basic services", Order = (int)PriceOrderEnum.Basic, UserId = userAdded.Id });
+                priceService.AddNewPrice(new PriceModel { Amount = 10, Details = "premium services", Order = (int)PriceOrderEnum.Premium, UserId = userAdded.Id });
+                priceService.AddNewPrice(new PriceModel { Amount = 7, Details = "standard services", Order = (int)PriceOrderEnum.Standard, UserId = userAdded.Id });
+                categoryService.AddCategoryToUser(userAdded.Id, adviser.CategoryId);
             }
             catch (ModelException exception)
             {
@@ -104,13 +159,17 @@ namespace WebAPI.Controllers
             var authorizedToken = tokenService.IsAuthorizedBase(token);
             if (authorizedToken != null)
             {
-                if (!ModelState.IsValid)
-                {
-                    tokenService.Update(authorizedToken.Id);
-                    return BadRequest();
-                }
                 var userService = new UserService();
-                var updatedUserProfile = userService.UpdateUserProfile(user);
+                UserModelForProfile updatedUserProfile;
+                try
+                {
+                    updatedUserProfile = userService.UpdateUserProfile(user);
+                }
+                catch (ModelException exception)
+                {
+                    return BadRequest(exception.Message);
+
+                }
                 if (updatedUserProfile == null)
                 {
                     tokenService.Update(authorizedToken.Id);
@@ -124,7 +183,7 @@ namespace WebAPI.Controllers
 
         public IHttpActionResult GetUser(int userId)
         {
-           /* var token = HttpContext.Current.Request.Headers["TokenText"];
+            var token = HttpContext.Current.Request.Headers["TokenText"];
             var tokenService = new TokenService();
             var authorizedToken = tokenService.IsAuthorizedBase(token);
             if (authorizedToken != null)
@@ -133,18 +192,18 @@ namespace WebAPI.Controllers
                 {
                     tokenService.Update(authorizedToken.Id);
                     return BadRequest();
-                }*/
+                }
                 var userService = new UserService();
                 var userFound = userService.GetUser(userId);
                 if (userFound == null)
                 {
-              //      tokenService.Update(authorizedToken.Id);
+                    tokenService.Update(authorizedToken.Id);
                     return NotFound();
                 }
-              //  tokenService.Update(authorizedToken.Id);
+                tokenService.Update(authorizedToken.Id);
                 return Ok(userFound);
-            //}
-           // return BadRequest();
+            }
+            return BadRequest();
         }
 
         public IHttpActionResult GetUserData(string userData)
@@ -180,7 +239,7 @@ namespace WebAPI.Controllers
 
         [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]
-        public async Task<IHttpActionResult> SignInCallBackAsync(string code)
+        public async Task<HttpResponseMessage> SignInCallBackAsync(string code)
         {
             //getting the access_token from the code
             var uri = $"https://graph.facebook.com/v2.10/oauth/access_token?client_id={appId}&redirect_uri={redirectUri}&client_secret={appSecret}&code={code}";
@@ -200,11 +259,15 @@ namespace WebAPI.Controllers
                 service.AddUserFromFacebook(a.Name, a.Email, a.picture.data.url);
             }
             var token = service.LogInWithFacebook(res.access_token, a.Email);
+            var response3 = Request.CreateResponse(HttpStatusCode.Found);
+            response3.Headers.Location = new Uri($"http://localhost:8080");
+            var response4 = Request.CreateResponse(HttpStatusCode.Found);
+            response4.Headers.Location = new Uri($"http://localhost:8080/main/{token.TokenText}");
             if (token == null)
             {
-                return BadRequest();
+                return response3;
             }
-            return Ok(token);
+            return response4;
         }
 
         [System.Web.Http.HttpGet]
