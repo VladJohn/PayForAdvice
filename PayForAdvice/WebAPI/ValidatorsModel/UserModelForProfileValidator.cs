@@ -15,7 +15,7 @@ namespace WebAPI.ValidatorsModel
             {
                 _errors.Add("Please enter your name");
             }
-            if (entity.Name.Length < 5 || entity.Name.Contains(" ") != true)
+            if (entity.Name.Length < 5 || entity.Name.Contains(" ") != true || entity.Name.IndexOf(" ") == entity.Name.Length - 1)
             {
                 _errors.Add("Please enter a correct name");
             }
